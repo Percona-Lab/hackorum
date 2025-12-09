@@ -101,6 +101,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
+  psql:
+    image: postgres:18
+    entrypoint: ["psql", "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-hackorum}"]
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles: ["tools"]
+
 volumes:
   pgdata:
   pgwal:
