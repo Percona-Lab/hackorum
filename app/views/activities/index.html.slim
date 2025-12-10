@@ -16,7 +16,7 @@
       .activity-card class=("is-unread" if activity.read_at.nil?)
         .activity-meta
           span.activity-type = activity.activity_type.humanize
-          span.activity-time = smart_time_display(activity.created_at)
+          span.activity-time title=absolute_time_display(activity.created_at) = smart_time_display(activity.created_at)
           - if activity.read_at.nil?
             span.activity-unread-badge Unread
 

@@ -19,7 +19,7 @@
           .author-email = message.sender.email
     .message-meta
       .message-date
-        time datetime=message.created_at.iso8601 title=message.created_at.strftime("%B %d, %Y at %I:%M %p")
+        time datetime=message.created_at.iso8601 title=absolute_time_display(message.created_at)
           = time_ago_in_words(message.created_at)
           |  ago
       - if message.reply_to

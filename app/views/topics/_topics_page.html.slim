@@ -32,7 +32,7 @@
     .topic-column.activity-col
       - last_message = topic.messages.order(:created_at).last
       .activity-info
-        .activity-time = time_ago_in_words(last_message.created_at) + " ago"
+        .activity-time title=absolute_time_display(last_message.created_at) = time_ago_in_words(last_message.created_at) + " ago"
         small.activity-author by #{last_message.sender.name}
 
 / Next page Turbo Frame for infinite scroll

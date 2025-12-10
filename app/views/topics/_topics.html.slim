@@ -16,7 +16,7 @@
       - last_message = topic.messages.order(:created_at).last
       .activity-info
         .activity-replies = "#{topic.messages.count - 1} replies"
-        .activity-time = smart_time_display(last_message.created_at)
+        .activity-time title=absolute_time_display(last_message.created_at) = smart_time_display(last_message.created_at)
     - if user_signed_in?
       - state = @topic_states&.dig(topic.id) || {}
       - status = state[:status]

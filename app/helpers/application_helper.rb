@@ -18,6 +18,11 @@ module ApplicationHelper
     end
   end
 
+  def absolute_time_display(time)
+    return "" if time.nil?
+    time.strftime("%B %d, %Y at %I:%M %p")
+  end
+
   def render_message_body(body)
     QuotedEmailFormatter.new(body.to_s).to_html.html_safe
   end
