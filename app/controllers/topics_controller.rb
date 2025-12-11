@@ -23,14 +23,9 @@ class TopicsController < ApplicationController
   def show
     messages_scope = @topic.messages.includes(:sender, reply_to: :sender)
 
-    @view_mode = params[:view].in?(%w[flat threaded]) ? params[:view] : 'threaded'
-    @sort_order = params[:sort].to_s == 'desc' ? :desc : :asc
-
-    @messages = if @view_mode == 'flat'
-                  messages_scope.order(created_at: @sort_order)
-                else
-                  messages_scope.order(:created_at)
-                end
+    @view_mode = 'flat'
+    @sort_order = :asc
+    @messages = messages_scope.order(created_at: @sort_order)
     @message_numbers = @messages.each_with_index.to_h { |msg, idx| [msg.id, idx + 1] }
     preload_read_state!
     auto_mark_aware!

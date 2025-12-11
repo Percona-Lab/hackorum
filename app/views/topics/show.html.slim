@@ -99,14 +99,6 @@
   .thread-notes-container
     = render "notes/note_stack", topic: @topic, message: nil, notes: thread_notes
 
-.view-toggle-bar
-  .view-toggle-group
-    = link_to "Threaded", topic_path(@topic, view: "threaded"), class: ["toggle-btn", ("active" if @view_mode == "threaded")].compact.join(" ")
-    = link_to "Flat", topic_path(@topic, view: "flat"), class: ["toggle-btn", ("active" if @view_mode == "flat")].compact.join(" ")
-  .view-toggle-group
-    = link_to "Oldest First", topic_path(@topic, view: @view_mode, sort: "asc"), class: ["toggle-btn", ("active" if @sort_order == :asc)].compact.join(" ")
-    = link_to "Newest First", topic_path(@topic, view: @view_mode, sort: "desc"), class: ["toggle-btn", ("active" if @sort_order == :desc)].compact.join(" ")
-
 .messages-container class=(["messages-container", @view_mode, (@sort_order == :desc ? "desc" : "asc")].compact.join(" "))
   - if user_signed_in?
     .thread-actions data-controller="thread-actions" data-thread-actions-topic-id-value=@topic.id data-thread-actions-read-all-url-value=read_all_topic_path(@topic, format: :json)
