@@ -1,0 +1,52 @@
+name: Prod Boot
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  prod-boot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare deploy env file
+        run: |
+          cp deploy/.env.example deploy/.env
+          # Override secrets/SSL for CI boot
+          ruby -e "require 'securerandom'; puts \"SECRET_KEY_BASE=#{SecureRandom.hex(64)}\"" >> deploy/.env
+          echo "FORCE_SSL=false" >> deploy/.env
+          echo "APP_HOST=localhost" >> deploy/.env
+          # Copy Postgres config template and shrink memory settings
+          cp deploy/postgres/postgresql.conf.example deploy/postgres/postgresql.conf
+          sed -i 's/^shared_buffers = .*/shared_buffers = 128MB/' deploy/postgres/postgresql.conf
+          sed -i 's/^effective_cache_size = .*/effective_cache_size = 256MB/' deploy/postgres/postgresql.conf
+          sed -i 's/^work_mem = .*/work_mem = 4MB/' deploy/postgres/postgresql.conf
+          sed -i 's/^maintenance_work_mem = .*/maintenance_work_mem = 64MB/' deploy/postgres/postgresql.conf
+
+      - name: Start database
+        run: docker compose -f deploy/docker-compose.yml up -d db
+
+      - name: Prepare database (migrations)
+        run: docker compose -f deploy/docker-compose.yml run --rm web bin/rails db:prepare
+
+      - name: Start web
+        run: docker compose -f deploy/docker-compose.yml up -d web
+
+      - name: Verify web healthcheck
+        run: |
+          for i in {1..30}; do
+            if docker compose -f deploy/docker-compose.yml exec web sh -lc "curl -fs http://localhost:3000/up"; then
+              exit 0
+            fi
+            sleep 5
+          done
+          docker compose -f deploy/docker-compose.yml logs --tail=200 web db
+          exit 1
+
+      - name: Teardown
+        if: always()
+        run: docker compose -f deploy/docker-compose.yml down -v

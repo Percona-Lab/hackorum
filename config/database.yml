@@ -65,7 +65,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: hackorum_production
+    database: hackorum
     username: hackorum
     password: <%= ENV["HACKORUM_DATABASE_PASSWORD"] %>
   cache:
