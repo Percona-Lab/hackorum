@@ -45,6 +45,7 @@
   --color-text-link-hover: var(--color-primary-900);
   --color-text-contrast: #f8fafc;
   --color-text-button: #0f172a;
+  --color-text-nav: var(--color-text-primary);
 
   --color-bg-page: var(--color-primary-1);
   --color-bg-input: #f8fafc;
@@ -134,6 +135,7 @@
   --color-text-link-hover: #e0e7ff;
   --color-text-contrast: #f8fafc;
   --color-text-button: #e2e8f0;
+  --color-text-nav: var(--color-text-contrast);
 
   --color-bg-page: var(--color-primary-1);
   --color-bg-input: #111827;

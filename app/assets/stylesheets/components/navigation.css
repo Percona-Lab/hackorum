@@ -29,7 +29,7 @@
 .brand-link {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-contrast);
+  color: var(--color-text-nav);
   text-decoration: none;
   margin-bottom: -2px;
 }
@@ -62,7 +62,7 @@
 }
 
 .nav-user {
-  color: var(--color-text-contrast);
+  color: var(--color-text-nav);
   font-weight: var(--font-weight-medium);
 }
 
