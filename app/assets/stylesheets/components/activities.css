@@ -19,8 +19,8 @@
 }
 
 .activity-card.is-unread {
-  border-color: #bfdbfe;
-  background: #eff6ff;
+  border-color: var(--color-primary-200);
+  background: var(--color-primary-50);
 }
 
 .activity-meta {
@@ -39,8 +39,8 @@
 
 .activity-unread-badge {
   padding: 2px 8px;
-  background: #2563eb;
-  color: white;
+  background: var(--color-primary-600);
+  color: var(--color-text-contrast);
   border-radius: 999px;
   font-size: var(--font-size-xs);
 }

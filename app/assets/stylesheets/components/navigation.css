@@ -18,6 +18,7 @@
   justify-content: space-between;
   align-items: center;
   min-height: var(--nav-height);
+  gap: var(--spacing-4);
 }
 
 .nav-brand {
@@ -28,7 +29,7 @@
 .brand-link {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  color: #000;
+  color: var(--color-text-contrast);
   text-decoration: none;
   margin-bottom: -2px;
 }
@@ -36,6 +37,7 @@
 .tagline {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
 }
 
 .nav-links {
@@ -43,14 +45,39 @@
   gap: var(--spacing-6);
 }
 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.nav-auth form {
+  margin: 0;
+}
+
+.nav-user {
+  color: var(--color-text-contrast);
+  font-weight: var(--font-weight-medium);
+}
+
 .nav-link {
   background-color: var(--color-bg-button);
-  color: #000;
+  color: var(--color-text-button);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--border-radius-md);
   transition: all var(--transition-fast);
+  border: var(--border-width) solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
 
   &:hover {
     background-color: var(--color-bg-button-hover);
@@ -70,8 +97,20 @@
   min-width: 22px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #ef4444;
-  color: white;
+  background: var(--color-danger);
+  color: var(--color-text-contrast);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
+}
+
+.theme-toggle {
+  border-color: var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
 }

@@ -24,6 +24,7 @@
   --font-size-3xl: 2rem;
   --font-size-4xl: 2.5rem;
 
+  --font-family-base: var(--font-sans);
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;

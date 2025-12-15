@@ -51,7 +51,7 @@
   height: 42px;
   border-radius: 50%;
   border: var(--border-width) solid var(--color-border);
-  background: white;
+  background: var(--color-bg-card);
 }
 
 .author-details {
@@ -93,7 +93,7 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 
   &.is-read {
-    background: var(--color-gray-25, #f8f8f8);
+    background: var(--color-bg-hover);
   }
 }
 
@@ -103,7 +103,7 @@
   & .button-secondary {
     padding: var(--spacing-2) var(--spacing-4);
     border: var(--border-width) solid var(--color-border);
-    background: white;
+    background: var(--color-bg-card);
     border-radius: var(--border-radius-sm);
     cursor: pointer;
   }
@@ -151,7 +151,7 @@
   }
 
   & .message-diff {
-    background: var(--color-gray-100);
+    background: var(--color-bg-hover);
     border: var(--border-width) solid var(--color-border);
     border-radius: var(--border-radius-sm);
     padding: var(--spacing-3);
@@ -217,7 +217,7 @@
 
 .attachment {
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-gray-100);
+  background: var(--color-bg-hover);
   border-radius: var(--border-radius-sm);
   margin-bottom: var(--spacing-2);
 }
@@ -257,7 +257,7 @@
 .import-log {
   margin-top: var(--spacing-2);
   padding: var(--spacing-2);
-  background: var(--color-gray-100);
+  background: var(--color-bg-hover);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-xs);
   color: var(--color-gray-500);

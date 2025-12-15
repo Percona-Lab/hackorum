@@ -69,7 +69,7 @@
 
   & td {
     padding: var(--spacing-2);
-    border-bottom: 1px #000 solid;
+    border-bottom: var(--border-width) solid var(--color-border);
     vertical-align: top;
   }
 
@@ -113,7 +113,7 @@
   padding: 2px 4px;
   border-radius: 999px;
   background: var(--color-bg-icon);
-  color: #000;
+  color: var(--color-text-primary);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   line-height: 1;
@@ -192,7 +192,7 @@
 }
 
 .topic-row.topic-read {
-	color: #444;
+  color: var(--color-text-secondary);
 }
 
 .topic-icon-hover {
@@ -292,31 +292,31 @@
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: #f3f4f6;
+  background: var(--color-gray-50);
   border: 2px solid transparent;
   color: inherit;
 }
 
 .is-new .status-shape {
-  border-color: #ef4444;
-  background: #fee2e2;
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
 }
 
 .is-aware .status-shape {
-  border-color: #f59e0b;
-  background: #fef3c7;
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg);
   border-radius: 999px;
 }
 
 .is-reading .status-shape {
-  border-color: #38bdf8;
-  background: #e0f2fe;
+  border-color: var(--color-info);
+  background: var(--color-info-soft);
   border-radius: 4px;
 }
 
 .is-read .status-shape {
-  border-color: #1d4ed8;
-  background: #e0e7ff;
+  border-color: var(--color-primary-600);
+  background: var(--color-primary-100);
   border-radius: 4px;
 }
 
@@ -335,11 +335,11 @@
 }
 
 .team-reader-avatar.is-read {
-  border-color: #1d4ed8;
+  border-color: var(--color-primary-600);
 }
 
 .team-reader-avatar.is-reading {
-  border-color: #38bdf8;
+  border-color: var(--color-info);
 }
 
 .note-status {
@@ -362,8 +362,8 @@
   min-width: 22px;
   padding: 2px 6px;
   border-radius: 10px;
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--color-note-soft);
+  color: var(--color-warning-text);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
 }
@@ -391,19 +391,20 @@
 .mark-aware-button {
   padding: var(--spacing-2) var(--spacing-4);
   border: var(--border-width) solid var(--color-border);
-  background: white;
+  background: var(--color-bg-card);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
 
   &.secondary {
-    background: var(--color-gray-50);
+    background: var(--color-bg-hover);
   }
 }
 
 .global-warning {
-  background: #fff4e5;
-  color: #9a4d00;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
   padding: var(--spacing-2) var(--spacing-4);
   text-align: center;
   font-weight: var(--font-weight-semibold);
@@ -413,14 +414,14 @@
   margin-top: 6px;
   width: 120px;
   height: 6px;
-  background: var(--color-gray-100);
+  background: var(--color-bg-hover);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .status-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #a5b4fc, #6366f1);
+  background: linear-gradient(90deg, var(--color-primary-300), var(--color-primary-600));
 }
 
 .tag-filter-banner {
@@ -459,7 +460,7 @@
   text-decoration: none;
   color: var(--color-text-primary);
   font-weight: var(--font-weight-medium);
-  background: white;
+  background: var(--color-bg-card);
 }
 
 .toggle-btn.active {

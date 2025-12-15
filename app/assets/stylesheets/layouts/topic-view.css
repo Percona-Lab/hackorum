@@ -63,7 +63,7 @@
 
   &.active {
     background: var(--color-primary-500);
-    color: white;
+    color: var(--color-text-contrast);
   }
 }
 
@@ -254,7 +254,7 @@
   border-radius: 50%;
   border: var(--border-width) solid var(--color-border);
   object-fit: cover;
-  background: white;
+  background: var(--color-bg-card);
 }
 
 .outline-number {
