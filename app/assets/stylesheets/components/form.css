@@ -4,7 +4,7 @@ input {
   width: 100%;
   padding: var(--spacing-4);
   margin: var(--spacing-4) 0;
-  border: var(--border-width) solid var(--color-gray-300);
+  border: var(--border-width) solid var(--color-border);
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-base);
   display: block;

@@ -44,7 +44,7 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-3);
-  background: white;
+  background: var(--color-bg-card);
 }
 
 .note-meta {
