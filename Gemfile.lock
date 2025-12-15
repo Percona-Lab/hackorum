@@ -44,6 +44,9 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_record_extended (3.4.0)
+      activerecord (>= 5.2, < 8.1)
+      pg (< 3.0)
     activejob (8.0.4)
       activesupport (= 8.0.4)
       globalid (>= 0.3.6)
@@ -472,6 +475,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  active_record_extended
   bcrypt (~> 3.1)
   bootsnap
   brakeman

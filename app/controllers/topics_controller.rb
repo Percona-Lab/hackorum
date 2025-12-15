@@ -82,9 +82,13 @@ class TopicsController < ApplicationController
     @search_query = params[:q].to_s.strip
 
     base_query = if @search_query.present?
-                   Topic.joins(:messages)
-                        .where("topics.title ILIKE ? OR messages.body ILIKE ?", "%#{@search_query}%", "%#{@search_query}%")
-                        .distinct
+                   search_pattern = "%#{ActiveRecord::Base.sanitize_sql_like(@search_query)}%"
+
+                   title_sql = Topic.select(:id).where("title ILIKE ?", search_pattern).to_sql
+                   message_sql = Message.select(:topic_id).where("body ILIKE ?", search_pattern).to_sql
+                   union_sql = "(#{title_sql}) UNION (#{message_sql})"
+
+                   Topic.where("topics.id IN (#{union_sql})")
                         .includes(:creator)
                  else
                    Topic.none
@@ -237,6 +241,7 @@ class TopicsController < ApplicationController
 
     @topics = @topics.order('MAX(messages.created_at) DESC, topics.id DESC')
                      .limit(25)
+                     .load
 
     @new_topics_count = base_query.joins(:messages)
                                    .group('topics.id')

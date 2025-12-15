@@ -10,9 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_07_120000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_150057) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_stat_statements"
+  enable_extension "pg_trgm"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
@@ -146,6 +148,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_07_120000) do
     t.text "import_log"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["body"], name: "index_messages_on_body_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["message_id"], name: "index_messages_on_message_id", unique: true
     t.index ["reply_to_id"], name: "index_messages_on_reply_to_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
@@ -256,6 +259,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_07_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_topics_on_creator_id"
+    t.index ["title"], name: "index_topics_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "user_tokens", force: :cascade do |t|
