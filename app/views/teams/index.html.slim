@@ -11,7 +11,7 @@
           - @your_teams.each do |team|
             li
               = link_to team.name, team_path(team)
-              span.team-meta = "#{team.team_members.count} member(s)"
+              span.team-meta = " - #{team.team_members.count} member(s)"
       - else
         p You are not in any teams yet.
 
@@ -30,6 +30,6 @@
         - @all_teams.each do |team|
           li
             = link_to team.name, team_path(team)
-            span.team-meta = "#{team.team_members.count} member(s)"
+            span.team-meta = " - #{team.team_members.count} member(s)"
     - else
       p No teams yet.
