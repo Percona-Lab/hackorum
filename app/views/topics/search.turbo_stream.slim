@@ -1,9 +1,16 @@
 = turbo_stream.append "topics" do
   = render partial: "topics", locals: { topics: @topics }
 
+- if user_signed_in?
+  - frame_id = params[:cursor].present? ? "user-state-#{params[:cursor]}" : "user-state-root"
+  = turbo_stream.append "user-state-requests" do
+    = turbo_frame_tag frame_id, src: user_state_frame_topics_path(topic_ids: @topics.map(&:id), format: :turbo_stream), loading: :eager
+
 - if @topics.size == 25
   - last_topic = @topics.last
   - cursor = "#{last_topic.last_activity.iso8601}_#{last_topic.id}"
   = turbo_stream.replace "pagination" do
     = turbo_frame_tag "pagination", src: search_topics_path(q: @search_query, cursor: cursor, viewing_since: @viewing_since.iso8601, longpage: @current_longpage, format: :turbo_stream), loading: :lazy do
       .loading-indicator Loading more results...
+- elsif params[:cursor].present?
+  = turbo_stream.remove "pagination"

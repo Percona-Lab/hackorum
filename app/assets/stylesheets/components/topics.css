@@ -193,6 +193,10 @@
   }
 }
 
+.is-hidden {
+  display: none !important;
+}
+
 .topic-row {
   &:hover {
     background: var(--color-bg-hover);

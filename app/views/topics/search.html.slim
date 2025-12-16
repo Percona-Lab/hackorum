@@ -7,6 +7,9 @@
 
 - if @search_query.present?
   - if @topics.any?
+    - if user_signed_in?
+      #user-state-requests
+        = turbo_frame_tag "user-state-root", src: user_state_frame_topics_path(topic_ids: @topics.map(&:id), format: :turbo_stream), loading: :eager
     .topics-table
       table
         thead
@@ -23,6 +26,9 @@
         - cursor = "#{last_topic.last_activity.iso8601}_#{last_topic.id}"
         = turbo_frame_tag "pagination", src: search_topics_path(q: @search_query, cursor: cursor, viewing_since: @viewing_since.iso8601, longpage: @current_longpage, format: :turbo_stream), loading: :lazy do
           .loading-indicator Loading more results...
+      - else
+        = turbo_frame_tag "pagination"
+
   - else
     .no-results
       h3 No results found

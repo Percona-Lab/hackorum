@@ -1,0 +1,17 @@
+- status = state[:status] || "new"
+- status_class = "status-#{status}"
+td.topic-title.status-border class=status_class id=dom_id(topic, "status_cell") data-label="Topic"
+  - if status.to_s == "reading"
+    - read_count = state[:read_count].to_i
+    - total_count = topic.messages.count
+    - unread_count = [total_count - read_count, 0].max
+    .topic-icon.topic-icon-reading
+      i.fa-solid.fa-envelope
+      - if unread_count.positive?
+        span.topic-icon-badge.topic-icon-badge-sup = unread_count
+  = render partial: "topics/note_icon", locals: { topic: topic, count: note_count.to_i }
+  = render partial: "topics/team_readers_icon", locals: { topic: topic, readers: team_readers }
+  - if topic.attachments.exists?
+    .topic-icon
+      i.fa-solid.fa-paperclip
+  = link_to topic.title, topic_path(topic), class: "topic-link"

@@ -1,0 +1,11 @@
+- @topics.each do |topic|
+  - state = @topic_states[topic.id] || {}
+  - note_count = @topic_note_counts&.dig(topic.id).to_i
+  - participation = @participation_flags&.dig(topic.id) || {}
+  - team_readers = state[:team_readers] || []
+
+  = turbo_stream.replace dom_id(topic, "status_cell") do
+    = render partial: "topics/status_cell", locals: { topic: topic, state: state, note_count: note_count, team_readers: team_readers }
+
+  = turbo_stream.replace dom_id(topic, "participation") do
+    = render partial: "topics/participation_icon", locals: { topic: topic, participation: participation }

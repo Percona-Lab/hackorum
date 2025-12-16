@@ -8,15 +8,18 @@ class TopicsController < ApplicationController
 
     apply_cursor_pagination(base_query)
     @new_topics_count = 0
+    @page_cache_key = topics_page_cache_key
 
-    preload_topic_states if user_signed_in?
-    preload_note_counts if user_signed_in?
     load_visible_tags if user_signed_in?
-    preload_participation_flags if user_signed_in?
 
     respond_to do |format|
       format.html
-      format.turbo_stream
+      format.turbo_stream do
+        body = topics_turbo_stream_cache_fetch do
+          render_to_string(:index, formats: [:turbo_stream])
+        end
+        render body:, content_type: "text/vnd.turbo-stream.html"
+      end
     end
   end
 
@@ -103,6 +106,61 @@ class TopicsController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream { render :search }
+    end
+  end
+
+  def user_state
+    topic_ids = params[:topic_ids].is_a?(Array) ? params[:topic_ids].map(&:to_i).uniq : []
+    return render json: { topics: {} } unless user_signed_in? && topic_ids.any?
+
+    @topics = Topic.where(id: topic_ids)
+    preload_topic_states
+    preload_note_counts
+    preload_participation_flags
+
+    payload = topic_ids.index_with do |tid|
+      state = @topic_states[tid] || {}
+      readers = Array(state[:team_readers]).map do |entry|
+        {
+          status: entry[:status],
+          user_id: entry[:user]&.id,
+          team_ids: entry[:team_ids]
+        }
+      end
+      participation = @participation_flags&.dig(tid) || { mine: false, team: false, aliases: [] }
+      participation_payload = {
+        mine: participation[:mine],
+        team: participation[:team],
+        aliases_count: Array(participation[:aliases]).size
+      }
+      {
+        status: state[:status],
+        progress: state[:progress],
+        read_count: state[:read_count],
+        last_id: state[:last_id],
+        aware_until: state[:aware_until],
+        team_readers: readers,
+        note_count: @topic_note_counts&.dig(tid).to_i,
+        participation: participation_payload
+      }
+    end
+
+    render json: { topics: payload }
+  end
+
+  def user_state_frame
+    topic_ids = params[:topic_ids].is_a?(Array) ? params[:topic_ids].map(&:to_i).uniq : []
+    return head :unauthorized unless user_signed_in?
+    return head :ok if topic_ids.empty?
+
+    @topics = Topic.includes(:creator).where(id: topic_ids)
+    preload_topic_states
+    preload_note_counts
+    preload_participation_flags
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { head :not_acceptable }
     end
   end
 
@@ -669,6 +727,34 @@ class TopicsController < ApplicationController
       last_activity = entry[:last_activity]
       topic.define_singleton_method(:last_activity) { last_activity }
       topic
+    end
+  end
+
+  def topics_page_cache_key
+    return nil unless @topics&.last
+    return nil if params[:filter].present? || params[:team_id].present?
+
+    last_topic = @topics.last
+    watermark = "#{last_topic.last_activity.to_i}_#{last_topic.id}"
+    ["topics-index", watermark]
+  end
+
+  def topics_turbo_stream_cache_key
+    [
+      "topics-index-turbo",
+      params[:filter],
+      params[:team_id],
+      params[:cursor].presence || "root"
+    ]
+  end
+
+  def topics_turbo_stream_cache_read
+    Rails.cache.read(topics_turbo_stream_cache_key)
+  end
+
+  def topics_turbo_stream_cache_fetch
+    Rails.cache.fetch(topics_turbo_stream_cache_key, expires_in: 10.minutes) do
+      yield
     end
   end
 end

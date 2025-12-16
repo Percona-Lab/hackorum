@@ -1,40 +1,6 @@
 - topics.each do |topic|
-  - state = @topic_states&.dig(topic.id) || {}
-  - team_readers = state[:team_readers] || []
-  - filtered_readers = team_readers
-  - if params[:team_id].present?
-    - filtered_readers = team_readers.select { |r| r[:team_ids]&.include?(params[:team_id].to_i) }
-  - other_team_readers = filtered_readers.reject { |r| r[:user].id == current_user&.id }.uniq { |r| r[:user].id }
-  tr class="topic-row topic-#{state[:status]}" data-topic-id=topic.id data-last-message-id=topic.messages.maximum(:id)
-    td class="topic-title status-border status-#{state[:status] || 'new'}" data-label="Topic"
-      - if state[:status] == :reading
-        - unread_count = [topic.messages.count - state[:read_count], 0].max
-        .topic-icon.topic-icon-reading
-          i.fa-solid.fa-envelope
-          - if unread_count.positive?
-            span.topic-icon-badge.topic-icon-badge-sup = unread_count
-      - if user_signed_in? && other_team_readers.any?
-        - reader_count = other_team_readers.size
-        div class="topic-icon activity-team-read" data-controller="hover-popover" data-hover-popover-delay-value="200" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
-          i.fa-solid.fa-users
-          - if reader_count.positive?
-            span.topic-icon-badge = reader_count
-          .topic-icon-hover data-hover-popover-target="popover" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
-            - other_team_readers.each do |reader|
-              - alias_record = reader[:user].primary_alias || reader[:user].aliases.first
-              - next unless alias_record
-              - participant_stub = { alias: alias_record }
-              = render partial: "participant_row", locals: { participant: participant_stub, avatar_size: 32, tooltip: "#{alias_record.name} (#{reader[:status]})" }
-      - if user_signed_in?
-        - note_count = @topic_note_counts&.dig(topic.id).to_i
-        - if note_count.positive?
-          div class="topic-icon activity-note" data-controller="hover-popover" data-hover-popover-delay-value="200" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
-            i.fa-solid.fa-note-sticky
-            span.topic-icon-badge = note_count
-      - if topic.attachments.exists?
-        .topic-icon
-          i.fa-solid.fa-paperclip
-      = link_to topic.title, topic_path(topic), class: "topic-link"
+  tr class="topic-row" data-topic-id=topic.id data-last-message-id=topic.messages.maximum(:id)
+    = render partial: "topics/status_cell", locals: { topic: topic, state: {}, note_count: 0, team_readers: [] }
     td.topic-activity data-label="Activity"
       - last_message = topic.messages.order(:created_at).last
       - replies_count = [topic.messages.count - 1, 0].max
@@ -56,19 +22,4 @@
             .topic-icon-hover data-hover-popover-target="popover" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
               - contributor_participants.each do |participant|
                 = render partial: "participant_row", locals: { participant: participant, avatar_size: 32 }
-      - if user_signed_in?
-        - participation = @participation_flags&.dig(topic.id)
-        - show_team_icon = participation && (participation[:team] || participation[:mine])
-        - if show_team_icon
-          - icon_classes = ["topic-icon", "activity-team"]
-          - icon_classes << "is-mine" if participation[:mine]
-          - aliases = participation[:aliases] || []
-          div class=icon_classes.join(" ") data-controller="hover-popover" data-hover-popover-delay-value="200" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
-            i.fa-solid.fa-user-group
-            - if aliases.size > 1
-              span.topic-icon-badge = aliases.size
-            - if aliases.any?
-              .topic-icon-hover data-hover-popover-target="popover" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
-                - aliases.each do |alias_record|
-                  - participant_stub = { alias: alias_record }
-                  = render partial: "participant_row", locals: { participant: participant_stub, avatar_size: 32, tooltip: alias_record.name }
+      = render partial: "topics/participation_icon", locals: { topic: topic, participation: {} }

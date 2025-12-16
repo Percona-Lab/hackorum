@@ -1,32 +1,45 @@
 - content_for :title, "PostgreSQL Hackers Archive"
 
-= render partial: "sidebar", locals: { available_note_tags: @available_note_tags, search_query: @search_query }
+- cache_block = lambda do
+  #new-topics-banner data-controller="new-topics-banner" data-new-topics-banner-url-value=new_topics_count_topics_path(viewing_since: @viewing_since.iso8601, filter: params[:filter], team_id: params[:team_id]) data-new-topics-banner-interval-ms-value="180000"
+    = render partial: "new_topics_banner", locals: { count: @new_topics_count, viewing_since: @viewing_since }
 
-#new-topics-banner data-controller="new-topics-banner" data-new-topics-banner-url-value=new_topics_count_topics_path(viewing_since: @viewing_since.iso8601, filter: params[:filter], team_id: params[:team_id]) data-new-topics-banner-interval-ms-value="180000"
-  = render partial: "new_topics_banner", locals: { count: @new_topics_count, viewing_since: @viewing_since }
+  - if @active_note_tag.present?
+    .tag-filter-banner
+      span Filtering by ##{@active_note_tag}
+      = link_to "Clear", topics_path, class: "clear-tag-filter"
 
-- if @active_note_tag.present?
-  .tag-filter-banner
-    span Filtering by ##{@active_note_tag}
-    = link_to "Clear", topics_path, class: "clear-tag-filter"
-
-.topics-table
   - if user_signed_in?
-    .topics-actions data-controller="topics-aware" data-topics-aware-aware-url-value=aware_bulk_topics_path data-topics-aware-aware-all-url-value=aware_all_topics_path
-      button.mark-aware-button data-action="click->topics-aware#markVisibleAware" Mark displayed threads aware
-      button.mark-aware-button.secondary data-action="click->topics-aware#markAllAware" Mark everything up to now aware
+    #user-state-requests
+      = turbo_frame_tag "user-state-root", src: user_state_frame_topics_path(topic_ids: @topics.map(&:id), format: :turbo_stream), loading: :eager
 
-  table
-    thead
-      tr
-        th.topic-title Topic
-        th.activity-header Activity
-        th.participants-header Participants
-    tbody#topics
-      = render partial: "topics", locals: { topics: @topics }
+  .topics-table
+    - if user_signed_in?
+      .topics-actions data-controller="topics-aware" data-topics-aware-aware-url-value=aware_bulk_topics_path data-topics-aware-aware-all-url-value=aware_all_topics_path
+        button.mark-aware-button data-action="click->topics-aware#markVisibleAware" Mark displayed threads aware
+        button.mark-aware-button.secondary data-action="click->topics-aware#markAllAware" Mark everything up to now aware
 
-  - if @topics.size == 25
-    - last_topic = @topics.last
-    - cursor = "#{last_topic.last_activity.iso8601}_#{last_topic.id}"
-    = turbo_frame_tag "pagination", src: topics_path(cursor: cursor, viewing_since: @viewing_since.iso8601, format: :turbo_stream), loading: :lazy do
-      .loading-indicator Loading more topics...
+    table
+      thead
+        tr
+          th.topic-title Topic
+          th.activity-header Activity
+          th.participants-header Participants
+      tbody#topics
+        = render partial: "topics", locals: { topics: @topics }
+
+    - if @topics.size == 25
+      - last_topic = @topics.last
+      - cursor = "#{last_topic.last_activity.iso8601}_#{last_topic.id}"
+      = turbo_frame_tag "pagination", src: topics_path(cursor: cursor, viewing_since: @viewing_since.iso8601, format: :turbo_stream), loading: :lazy do
+        .loading-indicator Loading more topics...
+    - else
+      = turbo_frame_tag "pagination"
+
+- if @page_cache_key
+  = render partial: "sidebar", locals: { available_note_tags: @available_note_tags, search_query: @search_query }
+  - cache(@page_cache_key) do
+    - cache_block.call
+- else
+  = render partial: "sidebar", locals: { available_note_tags: @available_note_tags, search_query: @search_query }
+  - cache_block.call

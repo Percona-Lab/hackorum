@@ -57,9 +57,6 @@ class SearchResultCache
       "wm", watermark_part,
       "lp", @longpage
     ].join(":")
-    File.open("cachelog.txt", 'a') do |f|
-      f.puts "CACHE KEY: #{key}"
-    end
     key
   end
 
