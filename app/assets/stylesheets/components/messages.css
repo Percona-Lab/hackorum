@@ -224,9 +224,13 @@
 
 .attachment-info {
   display: flex;
-  gap: var(--spacing-3);
   align-items: center;
   font-size: var(--font-size-sm);
+}
+
+summary.attachment-info {
+  cursor: pointer;
+  display: list-item;
 }
 
 .filename {
@@ -236,6 +240,7 @@
 
 .content-type {
   color: var(--color-text-muted);
+  margin-left: var(--spacing-3);
 }
 
 .import-metadata {

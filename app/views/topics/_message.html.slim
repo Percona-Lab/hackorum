@@ -41,10 +41,19 @@
       .message-attachments
         h4 Attachments:
         - message.attachments.each do |attachment|
-          .attachment
-            .attachment-info
-              span.filename = attachment.file_name
-              span.content-type = attachment.content_type if attachment.content_type
+          - if attachment.patch?
+            details class="attachment"
+              summary class="attachment-info"
+                span.filename = attachment.file_name
+                span.content-type = attachment.content_type if attachment.content_type
+              pre class="attachment-content"
+                code class="language-diff"
+                  = attachment.decoded_body
+          - else
+            .attachment
+              .attachment-info
+                span.filename = attachment.file_name
+                span.content-type = attachment.content_type if attachment.content_type
 
   - if message.import_log.present?
     .import-metadata
