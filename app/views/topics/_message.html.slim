@@ -37,7 +37,7 @@
           span.attachment-count #{message.attachments.size} attachment(s)
       - if message.message_id.present?
         .message-archive-link
-          = link_to "https://postgr.es/m/#{message.message_id}", target: "_blank", rel: "noopener", data: { turbo: false }, title: "View on postgr.es", "aria-label": "View on postgr.es" do
+          = link_to "https://postgr.es/m/#{ERB::Util.url_encode(message.message_id)}", target: "_blank", rel: "noopener", data: { turbo: false }, title: "View on postgr.es", "aria-label": "View on postgr.es" do
             i.fa-solid.fa-building-columns
 
   .message-content class=read_classes.join(" ") data=read_data
