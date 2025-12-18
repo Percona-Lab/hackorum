@@ -229,6 +229,45 @@
   font-size: var(--font-size-sm);
 }
 
+summary.attachment-info {
+  cursor: pointer;
+}
+
+.attachment-summary-row {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: center;
+  width: 100%;
+}
+
+.attachment-download {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-link);
+  text-decoration: none;
+}
+
+.attachment-download:hover {
+  color: var(--color-text-link-hover);
+  text-decoration: underline;
+}
+
+.attachment-content {
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-2);
+  background: var(--color-bg-container);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  overflow-x: auto;
+}
+
+.attachment-content code {
+  display: block;
+  font-family: var(--font-family-mono);
+  white-space: pre;
+}
+
 .filename {
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);

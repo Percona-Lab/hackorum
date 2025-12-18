@@ -79,6 +79,17 @@ RSpec.describe "Topics", type: :request do
         reply_position = response.body.index(reply_message.body)
         expect(root_position).to be < reply_position
       end
+
+      it "renders patch attachments inline as expandable diff blocks" do
+        create(:attachment, :patch_file, message: root_message)
+
+        get topic_path(topic)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("Attachments:")
+        expect(response.body).to include('class="language-diff"')
+        expect(response.body).to include("diff --git")
+      end
     end
 
     context "with nonexistent topic" do
@@ -86,6 +97,31 @@ RSpec.describe "Topics", type: :request do
         get topic_path(id: 99999)
         expect(response).to have_http_status(:not_found)
       end
+    end
+  end
+
+  describe "GET /attachments/:id" do
+    let!(:creator) { create(:alias) }
+    let!(:topic) { create(:topic, creator: creator) }
+    let!(:message) { create(:message, topic: topic, sender: creator, reply_to: nil, created_at: 2.hours.ago) }
+
+    it "streams the attachment as a download with the right filename" do
+      attachment = create(:attachment, :patch_file, message: message)
+
+      get attachment_path(attachment)
+
+      expect(response).to have_http_status(:success)
+      expect(response.headers["Content-Disposition"]).to include("attachment")
+      expect(response.headers["Content-Disposition"]).to include(attachment.file_name)
+      expect(response.body).to include("diff --git")
+    end
+
+    it "returns 404 when the attachment body is missing" do
+      attachment = create(:attachment, body: nil, message: message)
+
+      get attachment_path(attachment)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

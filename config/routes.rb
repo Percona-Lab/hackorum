@@ -55,6 +55,7 @@ Rails.application.routes.draw do
   get '/auth/:provider/callback', to: 'omniauth_callbacks#google_oauth2'
 
   post "messages/:id/read", to: "messages#read", as: :read_message
+  resources :attachments, only: [:show]
 
   if defined?(PgHero)
     constraints AdminConstraint.new do

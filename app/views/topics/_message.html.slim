@@ -41,10 +41,22 @@
       .message-attachments
         h4 Attachments:
         - message.attachments.each do |attachment|
-          .attachment
-            .attachment-info
-              span.filename = attachment.file_name
-              span.content-type = attachment.content_type if attachment.content_type
+          - if attachment.patch?
+            details.attachment
+              summary.attachment-info
+                span.attachment-summary-row
+                  span.filename = attachment.file_name
+                  span.content-type = attachment.content_type if attachment.content_type
+                  = link_to "Download", attachment_path(attachment), class: "attachment-download", download: attachment.file_name, data: { turbo: false }
+              pre.attachment-content
+                code.language-diff
+                  = attachment.decoded_body
+          - else
+            .attachment
+              .attachment-info
+                span.filename = attachment.file_name
+                span.content-type = attachment.content_type if attachment.content_type
+                = link_to "Download", attachment_path(attachment), class: "attachment-download", download: attachment.file_name, data: { turbo: false }
 
   - if message.import_log.present?
     .import-metadata
