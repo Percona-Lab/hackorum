@@ -33,7 +33,7 @@ class TopicsController < ApplicationController
   end
 
   def show
-    messages_scope = @topic.messages.includes(:sender, reply_to: :sender)
+    messages_scope = @topic.messages.includes(:sender, { reply_to: :sender }, :attachments)
 
     @messages = messages_scope.order(created_at: :asc)
     @message_numbers = @messages.each_with_index.to_h { |msg, idx| [msg.id, idx + 1] }

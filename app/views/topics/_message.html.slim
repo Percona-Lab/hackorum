@@ -38,7 +38,7 @@
       = render_message_body(message.body)
     
     - if message.attachments.any?
-      .message-attachments
+      .message-attachments id="message-#{message.id}-attachments"
         h4 Attachments:
         - message.attachments.each do |attachment|
           - if attachment.patch?
