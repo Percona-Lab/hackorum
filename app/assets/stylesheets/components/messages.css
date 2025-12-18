@@ -88,6 +88,16 @@
   color: var(--color-success);
 }
 
+.message-archive-link {
+  margin-left: auto;
+
+  & a {
+    color: var(--color-text-link);
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 .message-content {
   padding: var(--spacing-5);
   transition: background-color 0.3s ease, color 0.3s ease;
