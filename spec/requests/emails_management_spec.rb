@@ -31,6 +31,9 @@ RSpec.describe 'Emails management', type: :request do
     expect(response).to redirect_to(settings_path)
 
     expect(Alias.by_email('new-address@example.com').where(user_id: user.id)).to exist
+
+    post session_path, params: { email: 'new-address@example.com', password: 'secret' }
+    expect(response).to redirect_to(root_path)
   end
 
   it 'blocks adding an email owned by another user' do

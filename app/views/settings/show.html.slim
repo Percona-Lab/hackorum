@@ -29,6 +29,26 @@
       = submit_tag "Update password", class: "button-primary"
 
   .settings-section
+    h2 Connected accounts
+    = link_to "Connect Google account", "/auth/google_oauth2?link=1", class: "button-primary", data: { turbo: false }
+
+    - if @identities.any?
+      table.email-table
+        thead
+          tr
+            th Provider
+            th Email
+            th Last used
+        tbody
+          - @identities.each do |identity|
+            tr
+              td = identity.provider == 'google_oauth2' ? 'Google' : identity.provider.titleize
+              td = identity.email.presence || identity.uid
+              td = identity.last_used_at ? l(identity.last_used_at, format: :short) : "Never"
+    - else
+      p No connected accounts yet.
+
+  .settings-section
     h2 Email addresses
     = form_with url: emails_path, method: :post, local: true, class: "email-form" do |f|
       .form-group

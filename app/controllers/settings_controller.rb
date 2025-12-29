@@ -5,5 +5,6 @@ class SettingsController < ApplicationController
 
   def show
     @aliases = current_user.aliases.order(:email)
+    @identities = current_user.identities.order(:provider, :email, :uid)
   end
 end
