@@ -7,6 +7,12 @@ class OmniauthCallbacksController < ApplicationController
     email = info['email']
     omniauth_params = request.env['omniauth.params'] || {}
     linking = omniauth_params['link'].present?
+    current_person = current_user&.person
+
+    if current_user && current_person.nil?
+      current_person = Person.create!
+      current_user.update!(person_id: current_person.id)
+    end
 
     identity = Identity.find_by(provider: provider, uid: uid)
 
@@ -23,20 +29,24 @@ class OmniauthCallbacksController < ApplicationController
 
         aliases = Alias.by_email(email).where(user_id: [nil, current_user.id])
         if aliases.exists?
-          aliases.update_all(user_id: current_user.id, verified_at: Time.current)
-          if current_user.primary_alias.nil?
+          aliases.find_each do |al|
+            current_person.attach_alias!(al, user: current_user)
+            al.update_columns(verified_at: Time.current)
+          end
+          if current_person.default_alias_id.nil?
             primary = aliases.find_by(primary_alias: true) || aliases.first
-            primary.update!(primary_alias: true) if primary
+            current_person.update!(default_alias_id: primary.id) if primary
           end
         else
           name = info['name'].presence || email
-          Alias.create!(
+          al = Alias.create!(
+            person: current_person,
             user: current_user,
             name: name,
             email: email,
-            primary_alias: current_user.primary_alias.nil?,
             verified_at: Time.current
           )
+          current_person.update!(default_alias_id: al.id) if current_person.default_alias_id.nil?
         end
 
         identity = Identity.create!(user: current_user, provider: provider, uid: uid, email: email, raw_info: auth.to_json, last_used_at: Time.current)
@@ -54,19 +64,24 @@ class OmniauthCallbacksController < ApplicationController
       if alias_user
         return redirect_to new_session_path, alert: 'That Google account is already associated with an existing user. Link it from Settings instead.'
       end
-      user = User.create!
+      person = Person.find_or_create_by_email(email)
+      user = User.create!(person_id: person.id)
 
       # If no aliases exist for this email, create one
       aliases = Alias.by_email(email).where(user_id: [nil, user.id])
       if aliases.exists?
-        aliases.update_all(user_id: user.id, verified_at: Time.current)
-        if user.primary_alias.nil?
+        aliases.find_each do |al|
+          person.attach_alias!(al, user: user)
+          al.update_columns(verified_at: Time.current)
+        end
+        if person.default_alias_id.nil?
           primary = aliases.find_by(primary_alias: true) || aliases.first
-          primary.update!(primary_alias: true) if primary
+          person.update!(default_alias_id: primary.id) if primary
         end
       else
         name = info['name'].presence || email
-        Alias.create!(user: user, name: name, email: email, primary_alias: user.primary_alias.nil?, verified_at: Time.current)
+        al = Alias.create!(person: person, user: user, name: name, email: email, verified_at: Time.current)
+        person.update!(default_alias_id: al.id) if person.default_alias_id.nil?
       end
 
       identity = Identity.create!(user: user, provider: provider, uid: uid, email: email, raw_info: auth.to_json, last_used_at: Time.current)

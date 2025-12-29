@@ -22,9 +22,8 @@ ApplicationRecord.transaction do
   Topic.delete_all
   TeamMember.delete_all
   Team.delete_all
-  ActiveRecord::Base.connection.execute("DELETE FROM aliases_contributors")
   Alias.delete_all
-  Contributor.delete_all
+  Person.delete_all
   NameReservation.delete_all
   User.delete_all
 end
@@ -33,20 +32,23 @@ now = Time.zone.now
 password = "password"
 
 def create_user_with_alias(username:, name:, email:, admin: false, verified: true, password:)
+  person = Person.create!
   user = User.create!(
     username:,
     admin:,
+    person:,
     password:,
     password_confirmation: password
   )
 
   ali = Alias.create!(
     user:,
+    person:,
     name:,
     email:,
-    primary_alias: true,
     verified_at: verified ? Time.current : nil
   )
+  person.update!(default_alias_id: ali.id)
 
   [user, ali]
 end
@@ -81,58 +83,32 @@ dave_user, dave_alias = create_user_with_alias(
 )
 
 legacy_alias = Alias.create!(
+  person: Person.create!,
   name: "Legacy Poster",
   email: "legacy@oldmail.example",
-  primary_alias: false,
   verified_at: nil
 )
+legacy_alias.person.update!(default_alias_id: legacy_alias.id)
 
 ci_bot_alias = Alias.create!(
+  person: Person.create!,
   name: "Build Bot",
   email: "buildbot@ci.example",
-  primary_alias: false,
   verified_at: now
 )
+ci_bot_alias.person.update!(default_alias_id: ci_bot_alias.id)
 
-# Contributor roles linked to aliases
-alice_contributor = Contributor.create!(
-  name: "Alice Core",
-  email: alice_alias.email,
-  contributor_type: :core_team,
-  profile_url: "https://example.com/alice"
-)
-
-bob_contributor = Contributor.create!(
-  name: "Bob Committer",
-  email: bob_alias.email,
-  contributor_type: :committer,
-  profile_url: "https://example.com/bob"
-)
-
-carol_contributor = Contributor.create!(
-  name: "Carol Contributor",
-  email: carol_alias.email,
-  contributor_type: :significant_contributor,
-  profile_url: "https://example.com/carol"
-)
-
-legacy_contributor = Contributor.create!(
-  name: "Pat Legacy",
-  email: legacy_alias.email,
-  contributor_type: :past_major_contributor,
-  profile_url: "https://example.com/legacy"
-)
-
-alice_contributor.aliases << alice_alias
-bob_contributor.aliases << bob_alias
-carol_contributor.aliases << carol_alias
-legacy_contributor.aliases << legacy_alias
+# Contributor roles assigned to people
+ContributorMembership.create!(person: alice_user.person, contributor_type: :core_team, name: alice_alias.name)
+ContributorMembership.create!(person: bob_user.person, contributor_type: :committer, name: bob_alias.name)
+ContributorMembership.create!(person: carol_user.person, contributor_type: :significant_contributor, name: carol_alias.name)
+ContributorMembership.create!(person: legacy_alias.person, contributor_type: :past_major_contributor, name: legacy_alias.name)
 
 # Independent team (not tied to contributors)
 example_team = Team.create!(name: "ExampleCompany")
 TeamMember.add_member(team: example_team, user: alice_user, role: :admin)
 TeamMember.add_member(team: example_team, user: bob_user, role: :member)
-  TeamMember.add_member(team: example_team, user: carol_user, role: :member)
+TeamMember.add_member(team: example_team, user: carol_user, role: :member)
 
 # Reserve mention handles for team sharing
 NameReservation.reserve!(name: example_team.name, owner: example_team)

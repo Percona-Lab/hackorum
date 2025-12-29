@@ -2,7 +2,7 @@ class EmailsController < ApplicationController
   before_action :require_authentication
 
   def index
-    @aliases = current_user.aliases.order(:email)
+    @aliases = current_user.person&.aliases&.order(:email) || []
   end
 
   def create
@@ -17,21 +17,19 @@ class EmailsController < ApplicationController
   end
 
   def destroy
-    al = current_user.aliases.find(params[:id])
-    if al.primary_alias?
+    al = current_user.person.aliases.find(params[:id])
+    if current_user.person&.default_alias_id == al.id
       redirect_to settings_path, alert: 'Cannot remove primary alias.'
     else
-      al.update!(user_id: nil, verified_at: nil)
+      new_person = Person.create!(default_alias_id: al.id)
+      al.update!(user_id: nil, verified_at: nil, person_id: new_person.id)
       redirect_to settings_path, notice: 'Email removed.'
     end
   end
 
   def primary
-    al = current_user.aliases.find(params[:id])
-    Alias.transaction do
-      current_user.aliases.update_all(primary_alias: false)
-      al.update!(primary_alias: true)
-    end
+    al = current_user.person.aliases.find(params[:id])
+    current_user.person&.update!(default_alias_id: al.id)
     redirect_to settings_path, notice: 'Primary email updated.'
   end
 end

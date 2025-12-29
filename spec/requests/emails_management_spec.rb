@@ -10,10 +10,18 @@ RSpec.describe 'Emails management', type: :request do
     expect(response).to redirect_to(root_path)
   end
 
+  def attach_verified_alias(user, email:, primary: true)
+    al = create(:alias, user: user, email: email)
+    if primary && user.person&.default_alias_id.nil?
+      user.person.update!(default_alias_id: al.id)
+    end
+    Alias.by_email(email).update_all(verified_at: Time.current)
+    al
+  end
+
   it 'sends verification for adding a new email and attaches on verify' do
     user = create(:user, password: 'secret', password_confirmation: 'secret')
-    create(:alias, user: user, email: 'me@example.com', primary_alias: true)
-    Alias.by_email('me@example.com').update_all(verified_at: Time.current)
+    attach_verified_alias(user, email: 'me@example.com')
 
     sign_in(email: 'me@example.com')
 
@@ -38,12 +46,10 @@ RSpec.describe 'Emails management', type: :request do
 
   it 'blocks adding an email owned by another user' do
     other = create(:user)
-    create(:alias, user: other, email: 'taken@example.com', primary_alias: true)
-    Alias.by_email('taken@example.com').update_all(verified_at: Time.current)
+    attach_verified_alias(other, email: 'taken@example.com')
 
     user = create(:user, password: 'secret', password_confirmation: 'secret')
-    create(:alias, user: user, email: 'me2@example.com', primary_alias: true)
-    Alias.by_email('me2@example.com').update_all(verified_at: Time.current)
+    attach_verified_alias(user, email: 'me2@example.com')
 
     sign_in(email: 'me2@example.com')
     expect {
@@ -54,8 +60,7 @@ RSpec.describe 'Emails management', type: :request do
 
   it 'attaches all matching aliases when the email exists multiple times' do
     user = create(:user, password: 'secret', password_confirmation: 'secret')
-    create(:alias, user: user, email: 'me-multi@example.com', primary_alias: true)
-    Alias.by_email('me-multi@example.com').update_all(verified_at: Time.current)
+    attach_verified_alias(user, email: 'me-multi@example.com')
 
     # Legacy duplicates for the same email (different names)
     create(:alias, email: 'multi@example.com', name: 'Old One')
@@ -80,12 +85,10 @@ RSpec.describe 'Emails management', type: :request do
 
   it 'rejects verification when logged in as a different user than the token user' do
     token_user = create(:user, password: 'secret', password_confirmation: 'secret')
-    create(:alias, user: token_user, email: 'token-user@example.com', primary_alias: true)
-    Alias.by_email('token-user@example.com').update_all(verified_at: Time.current)
+    attach_verified_alias(token_user, email: 'token-user@example.com')
 
     other_user = create(:user, password: 'secret', password_confirmation: 'secret')
-    create(:alias, user: other_user, email: 'other@example.com', primary_alias: true)
-    Alias.by_email('other@example.com').update_all(verified_at: Time.current)
+    attach_verified_alias(other_user, email: 'other@example.com')
 
     # Simulate an existing verification token for token_user.
     token, raw = UserToken.issue!(purpose: 'add_alias', user: token_user, email: 'token-user@example.com', ttl: 1.hour)

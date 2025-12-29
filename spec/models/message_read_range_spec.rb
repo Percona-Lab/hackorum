@@ -3,8 +3,8 @@
 require "rails_helper"
 
 RSpec.describe MessageReadRange, type: :model do
-  let(:user) { User.create! }
-  let(:alias_record) { Alias.create!(name: "Test", email: "test@example.com", user: user) }
+  let(:user) { create(:user) }
+  let(:alias_record) { Alias.create!(name: "Test", email: "test@example.com", user: user, person: user.person) }
   let(:topic) { Topic.create!(title: "Topic", creator: alias_record) }
 
   describe ".add_range" do

@@ -47,35 +47,36 @@ class Topic < ApplicationRecord
 
   def has_contributor_activity?
     @has_contributor_activity ||= begin
-      contributor_alias_ids = Contributor.joins(:aliases).pluck('aliases.id').uniq
-      messages.where(sender_id: contributor_alias_ids).exists?
+      contributor_people = ContributorMembership.select(:person_id).distinct
+      messages.joins(sender: :person).where(people: { id: contributor_people }).exists?
     end
   end
 
   def has_core_team_activity?
     @has_core_team_activity ||= begin
-      core_alias_ids = Contributor.core_team.joins(:aliases).pluck('aliases.id').uniq
-      messages.where(sender_id: core_alias_ids).exists?
+      core_people = ContributorMembership.core_team.select(:person_id)
+      messages.joins(sender: :person).where(people: { id: core_people }).exists?
     end
   end
 
   def has_committer_activity?
     @has_committer_activity ||= begin
-      committer_alias_ids = Contributor.committers.joins(:aliases).pluck('aliases.id').uniq
-      messages.where(sender_id: committer_alias_ids).exists?
+      committer_people = ContributorMembership.committer.select(:person_id)
+      messages.joins(sender: :person).where(people: { id: committer_people }).exists?
     end
   end
 
   def contributor_participants
     @contributor_participants ||= begin
-      contributor_alias_ids = Contributor.joins(:aliases).pluck('aliases.id').uniq
-      return [] if contributor_alias_ids.empty?
+      contributor_ids = ContributorMembership.select(:person_id).distinct
+      return [] unless contributor_ids.exists?
 
-      stats = messages.where(sender_id: contributor_alias_ids)
+      stats = messages.joins(sender: :person)
+                      .where(people: { id: contributor_ids })
                       .group(:sender_id)
-                      .select('sender_id, COUNT(*) AS message_count, MAX(created_at) AS last_at')
+                      .select('sender_id, COUNT(*) AS message_count, MAX(messages.created_at) AS last_at')
 
-      alias_map = Alias.includes(:contributors).where(id: stats.map(&:sender_id)).index_by(&:id)
+      alias_map = Alias.includes(:person).where(id: stats.map(&:sender_id)).index_by(&:id)
 
       stats.map do |row|
         alias_record = alias_map[row.sender_id]

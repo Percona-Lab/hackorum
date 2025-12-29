@@ -7,7 +7,8 @@ RSpec.describe 'Password reset', type: :request do
 
   it 'resets password via emailed token' do
     user = create(:user, password: 'oldsecret', password_confirmation: 'oldsecret')
-    create(:alias, user: user, email: 'reset@example.com', primary_alias: true)
+    al = create(:alias, user: user, email: 'reset@example.com')
+    user.person.update!(default_alias_id: al.id) if user.person.default_alias_id.nil?
     Alias.by_email('reset@example.com').update_all(verified_at: Time.current)
 
     perform_enqueued_jobs do
@@ -33,4 +34,3 @@ RSpec.describe 'Password reset', type: :request do
     Rack::Utils.parse_query(URI.parse(url).query)['token']
   end
 end
-

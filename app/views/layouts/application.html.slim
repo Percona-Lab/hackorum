@@ -51,8 +51,8 @@ html data-theme="light"
           span data-theme-target="label" Theme
         .nav-auth
           - if user_signed_in?
-            - if current_user&.primary_alias
-              span.nav-user = current_user.primary_alias.name
+            - if current_user&.person&.default_alias
+              span.nav-user = current_user.person.default_alias.name
             = link_to "Settings", settings_path, class: "nav-link"
             = button_to "Sign out", session_path, method: :delete, class: "nav-link", form: { style: 'display:inline' }, data: { turbo: false }
           - else

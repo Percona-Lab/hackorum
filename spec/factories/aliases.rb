@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :alias do
     user { nil }  # Can be anonymous
+    person { user&.person || association(:person) }
     sequence(:name) { |n| "User #{n}" }
     sequence(:email) { |n| "user#{n}@postgresql.org" }
     primary_alias { false }

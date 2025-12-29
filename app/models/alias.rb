@@ -1,15 +1,14 @@
 class Alias < ApplicationRecord
+  belongs_to :person
   belongs_to :user, optional: true
   has_many :topics, class_name: 'Topic', foreign_key: "creator_id", inverse_of: :creator
   has_many :messages, class_name: 'Message', foreign_key: "sender_id", inverse_of: :sender
   has_many :attachments, through: :messages
-  has_and_belongs_to_many :contributors
 
   validates :name, presence: true
   validates :email, presence: true
   validates :name, uniqueness: { scope: :email }
 
-  validate :only_one_primary_alias_per_user
 
   scope :by_email, ->(email) {
     where("lower(trim(email)) = lower(trim(?))", email)
@@ -22,43 +21,50 @@ class Alias < ApplicationRecord
   end
 
   def contributor
-    # Return the highest-priority contributor if multiple exist
-    # Priority: core_team > committer > major > significant > past_major > past_significant
-    @contributor ||= contributors.order(
-      Arel.sql("CASE contributor_type
-        WHEN 'core_team' THEN 1
-        WHEN 'committer' THEN 2
-        WHEN 'major_contributor' THEN 3
-        WHEN 'significant_contributor' THEN 4
-        WHEN 'past_major_contributor' THEN 5
-        WHEN 'past_significant_contributor' THEN 6
-        ELSE 7
-      END")
-    ).first
+    person
   end
 
+  CONTRIBUTOR_RANK = {
+    'core_team' => 1,
+    'committer' => 2,
+    'major_contributor' => 3,
+    'significant_contributor' => 4,
+    'past_major_contributor' => 5,
+    'past_significant_contributor' => 6
+  }.freeze
+
   def contributor?
-    contributors.any?
+    person&.contributor_memberships&.exists?
   end
 
   def contributor_type
-    contributor&.contributor_type
+    return nil unless person
+    types = person.contributor_memberships.pluck(:contributor_type)
+    types.min_by { |t| CONTRIBUTOR_RANK[t] || 99 }
   end
 
   def core_team?
-    contributors.any?(&:core_team?)
+    person&.contributor_memberships&.core_team&.exists?
   end
 
   def committer?
-    contributors.any?(&:committer?)
+    person&.contributor_memberships&.committer&.exists?
+  end
+
+  def past_contributor?
+    person&.contributor_memberships&.where(contributor_type: %w[past_major_contributor past_significant_contributor])&.exists?
+  end
+
+  def current_contributor?
+    contributor? && !past_contributor?
   end
 
   def major_contributor?
-    contributors.any?(&:major_contributor?)
+    person&.contributor_memberships&.major_contributor&.exists?
   end
 
   def significant_contributor?
-    contributors.any?(&:significant_contributor?)
+    person&.contributor_memberships&.significant_contributor&.exists?
   end
 
   def contributor_badge
@@ -74,12 +80,4 @@ class Alias < ApplicationRecord
     end
   end
 
-  private
-
-  def only_one_primary_alias_per_user
-    return unless user_id && primary_alias?
-    conflict = Alias.where(user_id: user_id, primary_alias: true)
-    conflict = conflict.where.not(id: id) if persisted?
-    errors.add(:primary_alias, 'only one primary alias per user') if conflict.exists?
-  end
 end

@@ -39,7 +39,7 @@ RSpec.describe 'Registration and Login', type: :request do
       al = user.aliases.first
       expect(al).to be_present
       expect(al.email).to eq('new@example.com')
-      expect(al.primary_alias).to be(true)
+      expect(user.person.default_alias_id).to eq(al.id)
       expect(al.verified_at).to be_present
     end
 
@@ -105,7 +105,8 @@ RSpec.describe 'Registration and Login', type: :request do
   describe 'password login' do
     it 'signs in with verified alias and password' do
       user = create(:user, password: 'secret', password_confirmation: 'secret')
-      create(:alias, user: user, email: 'login@example.com', primary_alias: true)
+      al = create(:alias, user: user, email: 'login@example.com')
+      user.person.update!(default_alias_id: al.id) if user.person.default_alias_id.nil?
       Alias.by_email('login@example.com').update_all(verified_at: Time.current)
 
       post session_path, params: { email: 'login@example.com', password: 'secret' }

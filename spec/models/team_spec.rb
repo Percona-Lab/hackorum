@@ -3,8 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Team, type: :model do
-  let(:user) { User.create! }
-  let(:user2) { User.create! }
+  let(:user) { create(:user) }
+  let(:user2) { create(:user) }
   let(:team) { Team.create!(name: "Team1") }
 
   before do

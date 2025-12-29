@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_17_180000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_29_102000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -45,19 +45,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_17_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "verified_at"
+    t.bigint "person_id", null: false
     t.index "lower(TRIM(BOTH FROM email))", name: "index_aliases_on_lower_trim_email"
     t.index ["name", "email"], name: "index_aliases_on_name_and_email", unique: true
+    t.index ["person_id"], name: "index_aliases_on_person_id"
     t.index ["user_id"], name: "index_aliases_on_user_id"
-  end
-
-  create_table "aliases_contributors", force: :cascade do |t|
-    t.bigint "alias_id", null: false
-    t.bigint "contributor_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["alias_id", "contributor_id"], name: "index_alias_contributors_unique", unique: true
-    t.index ["alias_id"], name: "index_aliases_contributors_on_alias_id"
-    t.index ["contributor_id"], name: "index_aliases_contributors_on_contributor_id"
   end
 
   create_table "attachments", force: :cascade do |t|
@@ -70,15 +62,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_17_180000) do
     t.index ["message_id"], name: "index_attachments_on_message_id"
   end
 
-  create_table "contributors", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "email"
+  create_table "contributor_memberships", force: :cascade do |t|
+    t.bigint "person_id"
     t.enum "contributor_type", null: false, enum_type: "contributor_type"
-    t.string "profile_url"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["contributor_type"], name: "index_contributors_on_contributor_type"
-    t.index ["email"], name: "index_contributors_on_email"
+    t.string "name"
+    t.string "email"
+    t.string "company"
+    t.index ["contributor_type"], name: "index_contributor_memberships_on_contributor_type"
+    t.index ["person_id", "contributor_type"], name: "index_contributor_memberships_unique", unique: true
+    t.index ["person_id"], name: "index_contributor_memberships_on_person_id"
   end
 
   create_table "identities", force: :cascade do |t|
@@ -227,6 +222,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_17_180000) do
     t.index ["filename"], name: "index_patch_files_on_filename"
   end
 
+  create_table "people", force: :cascade do |t|
+    t.bigint "default_alias_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["default_alias_id"], name: "index_people_on_default_alias_id"
+  end
+
   create_table "team_members", force: :cascade do |t|
     t.bigint "team_id", null: false
     t.bigint "user_id", null: false
@@ -290,15 +292,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_17_180000) do
     t.string "password_digest"
     t.boolean "admin", default: false, null: false
     t.datetime "deleted_at"
+    t.bigint "person_id", null: false
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
+    t.index ["person_id"], name: "index_users_on_person_id"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "activities", "users"
+  add_foreign_key "aliases", "people"
   add_foreign_key "aliases", "users"
-  add_foreign_key "aliases_contributors", "aliases"
-  add_foreign_key "aliases_contributors", "contributors"
   add_foreign_key "attachments", "messages"
+  add_foreign_key "contributor_memberships", "people"
   add_foreign_key "identities", "users"
   add_foreign_key "mentions", "aliases"
   add_foreign_key "mentions", "messages"
@@ -316,10 +320,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_17_180000) do
   add_foreign_key "notes", "users", column: "author_id"
   add_foreign_key "notes", "users", column: "last_editor_id"
   add_foreign_key "patch_files", "attachments"
+  add_foreign_key "people", "aliases", column: "default_alias_id"
   add_foreign_key "team_members", "teams"
   add_foreign_key "team_members", "users"
   add_foreign_key "thread_awarenesses", "topics"
   add_foreign_key "thread_awarenesses", "users"
   add_foreign_key "topics", "aliases", column: "creator_id"
   add_foreign_key "user_tokens", "users"
+  add_foreign_key "users", "people"
 end

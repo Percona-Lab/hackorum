@@ -12,13 +12,13 @@
 - avatar_classes << "is-committer" if !alias_record.core_team? && alias_record.committer?
 - avatar_classes << "is-major-contributor" if !alias_record.core_team? && !alias_record.committer? && alias_record.major_contributor?
 - avatar_classes << "is-significant-contributor" if !alias_record.core_team? && !alias_record.committer? && !alias_record.major_contributor? && alias_record.significant_contributor?
-- avatar_classes << "is-past-contributor" if alias_record.contributor&.past_contributor?
+- avatar_classes << "is-past-contributor" if alias_record.past_contributor?
 - row_classes = ["participant-row"]
 - row_classes << "is-core-team" if alias_record.core_team?
 - row_classes << "is-committer" if alias_record.committer?
 - row_classes << "is-major-contributor" if alias_record.major_contributor?
 - row_classes << "is-significant-contributor" if alias_record.significant_contributor?
-- row_classes << "is-past-contributor" if alias_record.contributor&.past_contributor?
+- row_classes << "is-past-contributor" if alias_record.past_contributor?
 .participant-row class=row_classes.join(" ") title=tooltip
   = image_tag alias_record.gravatar_url(size: avatar_size), class: avatar_classes.join(" "), alt: alias_record.name, title: tooltip
   .participant-details

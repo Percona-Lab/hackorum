@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password validations: false
 
+  belongs_to :person
   has_many :aliases
   has_many :topics, through: :aliases
   has_many :messages, through: :aliases
@@ -14,7 +15,7 @@ class User < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def primary_alias
-    aliases.find_by(primary_alias: true)
+    person&.default_alias
   end
 
   validates :username, format: { with: /\A[a-zA-Z0-9_\-\.]+\z/, allow_blank: true }

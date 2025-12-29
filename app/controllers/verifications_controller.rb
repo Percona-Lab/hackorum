@@ -25,7 +25,8 @@ class VerificationsController < ApplicationController
       return redirect_to new_session_path, alert: 'This email is already claimed. Please sign in.'
     end
 
-    user = User.new
+    person = Person.find_or_create_by_email(token.email)
+    user = User.new(person_id: person.id)
     metadata = JSON.parse(token.metadata || '{}') rescue {}
     desired_username = metadata['username']
     user.username = desired_username
@@ -53,12 +54,18 @@ class VerificationsController < ApplicationController
     end
 
     if existing_aliases.exists?
-      existing_aliases.update_all(user_id: user.id, verified_at: Time.current)
-      primary = existing_aliases.find_by(primary_alias: true) || existing_aliases.first
-      primary.update!(primary_alias: true)
+      existing_aliases.find_each do |al|
+        person.attach_alias!(al, user: user)
+        al.update_columns(verified_at: Time.current)
+      end
+      if person.default_alias_id.nil?
+        primary = existing_aliases.find_by(primary_alias: true) || existing_aliases.first
+        person.update!(default_alias_id: primary.id) if primary
+      end
     else
       name = metadata['name'] || token.email
-      Alias.create!(user: user, name: name, email: token.email, primary_alias: true, verified_at: Time.current)
+      al = Alias.create!(person: person, user: user, name: name, email: token.email, verified_at: Time.current)
+      person.update!(default_alias_id: al.id) if person.default_alias_id.nil?
     end
 
     reset_session
@@ -69,6 +76,8 @@ class VerificationsController < ApplicationController
   def handle_add_alias(token)
     user = token.user
     return redirect_to root_path, alert: 'Invalid token user' unless user
+    person = user.person || Person.create!
+    user.update!(person_id: person.id) if user.person_id.nil?
 
     if user_signed_in? && current_user.id != user.id
       return redirect_to settings_path, alert: 'This verification link belongs to a different user.'
@@ -81,9 +90,13 @@ class VerificationsController < ApplicationController
 
     aliases = Alias.by_email(email)
     if aliases.exists?
-      aliases.update_all(user_id: user.id, verified_at: Time.current)
+      aliases.find_each do |al|
+        person.attach_alias!(al, user: user)
+        al.update_columns(verified_at: Time.current)
+      end
     else
-      Alias.create!(user: user, name: email, email: email, verified_at: Time.current)
+      al = Alias.create!(person: person, user: user, name: email, email: email, verified_at: Time.current)
+      person.update!(default_alias_id: al.id) if person.default_alias_id.nil?
     end
 
     redirect_to settings_path, notice: 'Email added and verified.'

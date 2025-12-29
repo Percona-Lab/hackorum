@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe NameReservation, type: :model do
-  let(:user) { User.create! }
+  let(:user) { create(:user) }
   let(:team) { Team.create!(name: "team1") }
 
   it "reserves and prevents duplicates across owners" do

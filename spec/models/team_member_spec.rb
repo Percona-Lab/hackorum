@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe TeamMember, type: :model do
-  let(:user) { User.create! }
+  let(:user) { create(:user) }
   let(:team) { Team.create!(name: "Team") }
 
   it "adds member with enum role" do

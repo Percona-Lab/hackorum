@@ -43,6 +43,8 @@ class EmailIngestor
       import_log: import_log
     )
 
+    update_default_alias_for_person(msg.sender)
+
     add_mentions(msg, to)
     add_mentions(msg, cc)
 
@@ -58,7 +60,11 @@ class EmailIngestor
       name = m[:from].to_s.strip
       name = 'Unknown User' if name.empty?
       email = "#{name.downcase.gsub(/[^a-z0-9]/, '_')}@unknown.user"
-      [Alias.find_or_create_by(email: email, name: name) { |a| a.created_at = sent_at }]
+      person = Person.find_or_create_by_email(email)
+      [Alias.find_or_create_by(email: email, name: name) do |a|
+        a.created_at = sent_at
+        a.person_id = person.id
+      end]
     else
       from = create_users(m[:from], sent_at, 1)
       if from.empty?
@@ -156,8 +162,14 @@ class EmailIngestor
       name_or_alias = 'Noname' if name_or_alias.nil? || name_or_alias.empty?
       email = addresses[idx]
       next if email.nil? || email.empty?
+      person = Person.find_or_create_by_email(email)
+      Person.attach_alias_group!(email, person: person)
       u = Alias.find_by(email: email, name: name_or_alias)
-      u ||= Alias.create!(email: email, name: name_or_alias, created_at: created_at)
+      if u
+        u.update_columns(person_id: person.id) if u.person_id.nil?
+      else
+        u = Alias.create!(email: email, name: name_or_alias, created_at: created_at, person_id: person.id)
+      end
       users << u
     end
     users
@@ -191,6 +203,13 @@ class EmailIngestor
 
     # Allow RFC 5322 msg-id atext plus dot and @, strip anything else.
     ref_str.gsub(/[^A-Za-z0-9.!#$%&'*+\/=?^_`{|}~@-]/, '')
+  end
+
+  def update_default_alias_for_person(alias_record)
+    return unless alias_record&.person
+    return if alias_record.person.user.present?
+
+    alias_record.person.update_columns(default_alias_id: alias_record.id)
   end
 
   def fallback_thread_lookup(subject, message_id:, references:, sent_at:)

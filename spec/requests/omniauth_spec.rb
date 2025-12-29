@@ -17,7 +17,10 @@ RSpec.describe 'OmniAuth Google', type: :request do
   end
 
   def attach_verified_alias(user, email:, primary: true)
-    create(:alias, user: user, email: email, primary_alias: primary)
+    al = create(:alias, user: user, email: email)
+    if primary && user.person&.default_alias_id.nil?
+      user.person.update!(default_alias_id: al.id)
+    end
     Alias.by_email(email).update_all(verified_at: Time.current)
   end
 
@@ -36,7 +39,7 @@ RSpec.describe 'OmniAuth Google', type: :request do
     expect(identity).to be_present
     expect(alias_record).to be_present
     expect(alias_record.user_id).to eq(identity.user_id)
-    expect(alias_record.primary_alias).to be(true)
+    expect(identity.user.person.default_alias_id).to eq(alias_record.id)
     expect(alias_record.verified_at).to be_present
   end
 
