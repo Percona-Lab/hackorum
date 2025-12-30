@@ -8,11 +8,6 @@
       = link_to "Clear", topics_path, class: "clear-tag-filter"
 
   .topics-table
-    - if user_signed_in?
-      .topics-actions data-controller="topics-aware" data-topics-aware-aware-url-value=aware_bulk_topics_path data-topics-aware-aware-all-url-value=aware_all_topics_path
-        button.mark-aware-button data-action="click->topics-aware#markVisibleAware" Mark displayed threads aware
-        button.mark-aware-button.secondary data-action="click->topics-aware#markAllAware" Mark everything up to now aware
-
     table
       thead
         tr

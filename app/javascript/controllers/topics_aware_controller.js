@@ -4,10 +4,15 @@ export default class extends Controller {
   static values = {
     awareUrl: String,
     awareAllUrl: String,
+    confirmVisible: String,
+    confirmAll: String,
   }
 
   markVisibleAware(event) {
     event.preventDefault()
+    if (this.confirmVisibleValue && !window.confirm(this.confirmVisibleValue)) {
+      return
+    }
     const rows = Array.from(document.querySelectorAll("[data-topic-id][data-last-message-id]"))
     const payload = rows.map(row => ({
       topic_id: Number(row.dataset.topicId),
@@ -32,9 +37,7 @@ export default class extends Controller {
 
   markAllAware(event) {
     event.preventDefault()
-    if (!window.confirm("Mark ALL threads as aware up to now? This will clear the 'New' status everywhere.")) {
-      return
-    }
+    if (this.confirmAllValue && !window.confirm(this.confirmAllValue)) return
     fetch(this.awareAllUrlValue, {
       method: "POST",
       headers: {

@@ -1,5 +1,13 @@
 - content_for :sidebar do
   .sidebar
+
+    - if user_signed_in?
+      .sidebar-section
+        .sidebar-content
+          .topics-actions data-controller="topics-aware" data-topics-aware-aware-url-value=aware_bulk_topics_path data-topics-aware-aware-all-url-value=aware_all_topics_path data-topics-aware-confirm-visible-value="Mark the displayed threads as aware?" data-topics-aware-confirm-all-value="Mark ALL threads as aware up to now? This will clear the 'New' status everywhere."
+            button.mark-aware-button data-action="click->topics-aware#markVisibleAware" Mark displayed threads aware
+            button.mark-aware-button.secondary data-action="click->topics-aware#markAllAware" Mark everything up to now aware
+
     .sidebar-section
       h3.sidebar-heading Search
       .sidebar-search.sidebar-content
