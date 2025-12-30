@@ -16,3 +16,6 @@ production:
   commitfest_daily_import:
     command: "system('ruby', Rails.root.join('script', 'commitfest_import.rb').to_s)"
     schedule: every day at 3am
+  stats_daily_rebuild:
+    command: "system('ruby', Rails.root.join('script', 'build_stats.rb').to_s)"
+    schedule: every day at 4am

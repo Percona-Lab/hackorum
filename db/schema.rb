@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_29_164500) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_30_121500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -229,6 +229,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_164500) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["body"], name: "index_messages_on_body_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["created_at", "sender_id"], name: "index_messages_on_created_at_and_sender_id"
+    t.index ["created_at", "topic_id"], name: "index_messages_on_created_at_and_topic_id"
+    t.index ["created_at"], name: "index_messages_on_created_at"
     t.index ["message_id"], name: "index_messages_on_message_id", unique: true
     t.index ["reply_to_id"], name: "index_messages_on_reply_to_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
@@ -312,6 +315,199 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_164500) do
     t.index ["default_alias_id"], name: "index_people_on_default_alias_id"
   end
 
+  create_table "stats_daily", force: :cascade do |t|
+    t.date "interval_start", null: false
+    t.date "interval_end", null: false
+    t.integer "participants_active", default: 0, null: false
+    t.integer "participants_active_committers", default: 0, null: false
+    t.integer "participants_active_contributors", default: 0, null: false
+    t.integer "participants_new", default: 0, null: false
+    t.float "new_participants_lifetime_avg_days", default: 0.0, null: false
+    t.float "new_participants_lifetime_median_days", default: 0.0, null: false
+    t.float "new_participants_lifetime_max_days", default: 0.0, null: false
+    t.float "new_participants_daily_avg_messages", default: 0.0, null: false
+    t.integer "retained_365_participants", default: 0, null: false
+    t.float "retained_365_lifetime_avg_days", default: 0.0, null: false
+    t.float "retained_365_lifetime_median_days", default: 0.0, null: false
+    t.float "retained_365_daily_avg_messages", default: 0.0, null: false
+    t.integer "topics_new", default: 0, null: false
+    t.integer "topics_active", default: 0, null: false
+    t.integer "topics_new_by_new_participants", default: 0, null: false
+    t.integer "topics_new_by_new_users", default: 0, null: false
+    t.integer "topics_new_with_attachments_by_new_users", default: 0, null: false
+    t.integer "topics_new_with_contributor_activity", default: 0, null: false
+    t.integer "topics_new_without_contributor_activity", default: 0, null: false
+    t.integer "topics_new_no_attachments", default: 0, null: false
+    t.integer "topics_new_with_attachments_no_commitfest", default: 0, null: false
+    t.integer "topics_new_commitfest_abandoned", default: 0, null: false
+    t.integer "topics_new_commitfest_committed", default: 0, null: false
+    t.integer "topics_new_commitfest_in_progress", default: 0, null: false
+    t.integer "messages_total", default: 0, null: false
+    t.integer "messages_committers", default: 0, null: false
+    t.integer "messages_contributors", default: 0, null: false
+    t.integer "messages_new_participants", default: 0, null: false
+    t.integer "new_users_replied_to_others", default: 0, null: false
+    t.float "topics_messages_avg", default: 0.0, null: false
+    t.float "topics_messages_median", default: 0.0, null: false
+    t.integer "topics_messages_max", default: 0, null: false
+    t.float "topics_created_messages_avg", default: 0.0, null: false
+    t.float "topics_created_messages_median", default: 0.0, null: false
+    t.integer "topics_created_messages_max", default: 0, null: false
+    t.float "topic_longevity_avg_days", default: 0.0, null: false
+    t.float "topic_longevity_median_days", default: 0.0, null: false
+    t.integer "topic_longevity_max_days", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interval_start"], name: "index_stats_daily_on_interval_start", unique: true
+  end
+
+  create_table "stats_longevity_daily", force: :cascade do |t|
+    t.date "interval_start", null: false
+    t.date "interval_end", null: false
+    t.string "bucket", null: false
+    t.integer "count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interval_start", "bucket"], name: "index_stats_longevity_daily_on_interval_bucket", unique: true
+  end
+
+  create_table "stats_longevity_monthly", force: :cascade do |t|
+    t.date "interval_start", null: false
+    t.date "interval_end", null: false
+    t.string "bucket", null: false
+    t.integer "count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interval_start", "bucket"], name: "index_stats_longevity_monthly_on_interval_bucket", unique: true
+  end
+
+  create_table "stats_longevity_weekly", force: :cascade do |t|
+    t.date "interval_start", null: false
+    t.date "interval_end", null: false
+    t.string "bucket", null: false
+    t.integer "count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interval_start", "bucket"], name: "index_stats_longevity_weekly_on_interval_bucket", unique: true
+  end
+
+  create_table "stats_monthly", force: :cascade do |t|
+    t.date "interval_start", null: false
+    t.date "interval_end", null: false
+    t.integer "participants_active", default: 0, null: false
+    t.integer "participants_active_committers", default: 0, null: false
+    t.integer "participants_active_contributors", default: 0, null: false
+    t.integer "participants_new", default: 0, null: false
+    t.float "new_participants_lifetime_avg_days", default: 0.0, null: false
+    t.float "new_participants_lifetime_median_days", default: 0.0, null: false
+    t.float "new_participants_lifetime_max_days", default: 0.0, null: false
+    t.float "new_participants_daily_avg_messages", default: 0.0, null: false
+    t.integer "retained_365_participants", default: 0, null: false
+    t.float "retained_365_lifetime_avg_days", default: 0.0, null: false
+    t.float "retained_365_lifetime_median_days", default: 0.0, null: false
+    t.float "retained_365_daily_avg_messages", default: 0.0, null: false
+    t.integer "topics_new", default: 0, null: false
+    t.integer "topics_active", default: 0, null: false
+    t.integer "topics_new_by_new_participants", default: 0, null: false
+    t.integer "topics_new_by_new_users", default: 0, null: false
+    t.integer "topics_new_with_attachments_by_new_users", default: 0, null: false
+    t.integer "topics_new_with_contributor_activity", default: 0, null: false
+    t.integer "topics_new_without_contributor_activity", default: 0, null: false
+    t.integer "topics_new_no_attachments", default: 0, null: false
+    t.integer "topics_new_with_attachments_no_commitfest", default: 0, null: false
+    t.integer "topics_new_commitfest_abandoned", default: 0, null: false
+    t.integer "topics_new_commitfest_committed", default: 0, null: false
+    t.integer "topics_new_commitfest_in_progress", default: 0, null: false
+    t.integer "messages_total", default: 0, null: false
+    t.integer "messages_committers", default: 0, null: false
+    t.integer "messages_contributors", default: 0, null: false
+    t.integer "messages_new_participants", default: 0, null: false
+    t.integer "new_users_replied_to_others", default: 0, null: false
+    t.float "topics_messages_avg", default: 0.0, null: false
+    t.float "topics_messages_median", default: 0.0, null: false
+    t.integer "topics_messages_max", default: 0, null: false
+    t.float "topics_created_messages_avg", default: 0.0, null: false
+    t.float "topics_created_messages_median", default: 0.0, null: false
+    t.integer "topics_created_messages_max", default: 0, null: false
+    t.float "topic_longevity_avg_days", default: 0.0, null: false
+    t.float "topic_longevity_median_days", default: 0.0, null: false
+    t.integer "topic_longevity_max_days", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interval_start"], name: "index_stats_monthly_on_interval_start", unique: true
+  end
+
+  create_table "stats_retention_milestones", force: :cascade do |t|
+    t.date "cohort_start", null: false
+    t.integer "horizon_months", null: false
+    t.integer "period_months", default: 1, null: false
+    t.string "segment", default: "all", null: false
+    t.integer "cohort_size", default: 0, null: false
+    t.integer "retained_users", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["period_months", "segment", "cohort_start", "horizon_months"], name: "index_stats_retention_milestones_on_period_segment_horizon", unique: true
+  end
+
+  create_table "stats_retention_monthly", force: :cascade do |t|
+    t.date "cohort_start", null: false
+    t.integer "months_since", null: false
+    t.integer "period_months", default: 1, null: false
+    t.string "segment", default: "all", null: false
+    t.integer "cohort_size", default: 0, null: false
+    t.integer "active_users", default: 0, null: false
+    t.float "avg_messages_per_active_user", default: 0.0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["period_months", "segment", "cohort_start", "months_since"], name: "idx_on_period_months_segment_cohort_start_months_si_781b1e55b4", unique: true
+  end
+
+  create_table "stats_weekly", force: :cascade do |t|
+    t.date "interval_start", null: false
+    t.date "interval_end", null: false
+    t.integer "participants_active", default: 0, null: false
+    t.integer "participants_active_committers", default: 0, null: false
+    t.integer "participants_active_contributors", default: 0, null: false
+    t.integer "participants_new", default: 0, null: false
+    t.float "new_participants_lifetime_avg_days", default: 0.0, null: false
+    t.float "new_participants_lifetime_median_days", default: 0.0, null: false
+    t.float "new_participants_lifetime_max_days", default: 0.0, null: false
+    t.float "new_participants_daily_avg_messages", default: 0.0, null: false
+    t.integer "retained_365_participants", default: 0, null: false
+    t.float "retained_365_lifetime_avg_days", default: 0.0, null: false
+    t.float "retained_365_lifetime_median_days", default: 0.0, null: false
+    t.float "retained_365_daily_avg_messages", default: 0.0, null: false
+    t.integer "topics_new", default: 0, null: false
+    t.integer "topics_active", default: 0, null: false
+    t.integer "topics_new_by_new_participants", default: 0, null: false
+    t.integer "topics_new_by_new_users", default: 0, null: false
+    t.integer "topics_new_with_attachments_by_new_users", default: 0, null: false
+    t.integer "topics_new_with_contributor_activity", default: 0, null: false
+    t.integer "topics_new_without_contributor_activity", default: 0, null: false
+    t.integer "topics_new_no_attachments", default: 0, null: false
+    t.integer "topics_new_with_attachments_no_commitfest", default: 0, null: false
+    t.integer "topics_new_commitfest_abandoned", default: 0, null: false
+    t.integer "topics_new_commitfest_committed", default: 0, null: false
+    t.integer "topics_new_commitfest_in_progress", default: 0, null: false
+    t.integer "messages_total", default: 0, null: false
+    t.integer "messages_committers", default: 0, null: false
+    t.integer "messages_contributors", default: 0, null: false
+    t.integer "messages_new_participants", default: 0, null: false
+    t.integer "new_users_replied_to_others", default: 0, null: false
+    t.float "topics_messages_avg", default: 0.0, null: false
+    t.float "topics_messages_median", default: 0.0, null: false
+    t.integer "topics_messages_max", default: 0, null: false
+    t.float "topics_created_messages_avg", default: 0.0, null: false
+    t.float "topics_created_messages_median", default: 0.0, null: false
+    t.integer "topics_created_messages_max", default: 0, null: false
+    t.float "topic_longevity_avg_days", default: 0.0, null: false
+    t.float "topic_longevity_median_days", default: 0.0, null: false
+    t.integer "topic_longevity_max_days", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interval_start"], name: "index_stats_weekly_on_interval_start", unique: true
+  end
+
   create_table "team_members", force: :cascade do |t|
     t.bigint "team_id", null: false
     t.bigint "user_id", null: false
@@ -346,6 +542,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_164500) do
     t.bigint "creator_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_topics_on_created_at"
     t.index ["creator_id"], name: "index_topics_on_creator_id"
     t.index ["title"], name: "index_topics_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end

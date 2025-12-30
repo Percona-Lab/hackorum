@@ -27,4 +27,5 @@ body {
   border-right: var(--border-width) solid var(--color-border);
   min-height: calc(100vh - var(--nav-height));
   background-color: var(--color-bg-sidebar);
+  align-self: stretch;
 }
