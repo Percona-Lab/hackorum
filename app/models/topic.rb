@@ -73,13 +73,14 @@ class Topic < ApplicationRecord
 
       stats = messages.joins(sender: :person)
                       .where(people: { id: contributor_ids })
-                      .group(:sender_id)
-                      .select('sender_id, COUNT(*) AS message_count, MAX(messages.created_at) AS last_at')
+                      .group('people.id')
+                      .select('people.id AS person_id, COUNT(*) AS message_count, MAX(messages.created_at) AS last_at')
 
-      alias_map = Alias.includes(person: :contributor_memberships).where(id: stats.map(&:sender_id)).index_by(&:id)
+      people = Person.includes(:default_alias, :contributor_memberships).where(id: stats.map(&:person_id)).index_by(&:id)
 
       stats.map do |row|
-      alias_record = alias_map[row.sender_id]
+        person = people[row.person_id]
+        alias_record = person&.default_alias
         next unless alias_record
 
         {

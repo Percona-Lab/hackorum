@@ -86,49 +86,26 @@
 .participants-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
+  gap: var(--spacing-1);
 }
 
 .participant-row {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--spacing-3);
+  display: flex;
   align-items: center;
-  padding: var(--spacing-3);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--border-radius-md);
+  justify-content: space-between;
+  padding: 0 var(--spacing-3);
   background: var(--color-bg-card);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-
-  &.is-core-team {
-    border-color: #ff0080;
-    box-shadow: 0 2px 8px rgba(255, 0, 128, 0.15);
-  }
-
-  &.is-committer {
-    border-color: #8b5cf6;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.12);
-  }
-
-  &.is-major-contributor {
-    border-color: #f59e0b;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
-  }
-
-  &.is-significant-contributor {
-    border-color: #10b981;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
-  }
-
-  &.is-past-contributor {
-    border-color: var(--color-border);
-    background: var(--color-gray-50);
-  }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    background: var(--color-bg-card-hover);
   }
+}
+
+.participant-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
 }
 
 .participant-details {
@@ -138,8 +115,26 @@
 }
 
 .participant-name {
-  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
+}
+
+.participant-memberships {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.participant-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--border-radius-full);
+  background: var(--color-bg-hover);
+  color: var(--color-text-secondary);
 }
 
 .participant-more {

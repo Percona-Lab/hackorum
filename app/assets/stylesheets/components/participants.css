@@ -39,6 +39,10 @@
   }
 }
 
+.participant-left {
+  text-align: left;
+}
+
 .participant-avatar-link {
   display: inline-block;
 }
@@ -52,30 +56,8 @@
   text-decoration: underline;
 }
 
-.participant-avatar.is-core-team {
-  border-color: #ff0080;
-  border-width: 3px;
-  box-shadow: 0 0 0 1px #ff0080;
-}
-
-.participant-avatar.is-committer {
-  border-color: #8b5cf6;
-  border-width: 3px;
-}
-
-.participant-avatar.is-major-contributor {
-  border-color: #f59e0b;
-  border-width: 2px;
-}
-
-.participant-avatar.is-significant-contributor {
-  border-color: #10b981;
-  border-width: 2px;
-}
-
-.participant-avatar.is-past-contributor {
-  border-color: var(--color-text-muted);
-  border-style: dashed;
+.participant-name-link.is-committer {
+  font-weight: var(--font-weight-semibold);
 }
 
 .participants-count {

@@ -51,6 +51,7 @@
   --color-bg-input: var(--color-gray-50);
   --color-bg-container: #ffffff;
   --color-bg-card: var(--color-bg-container);
+  --color-bg-card-hover: var(--color-gray-200);
   --color-bg-hover: var(--color-primary-2);
   --color-bg-sidebar: #f3f4ff;
   --color-bg-sidebar-header: var(--color-primary-2);
@@ -141,6 +142,7 @@
   --color-bg-input: var(--color-gray-100);
   --color-bg-container: var(--color-primary-2);
   --color-bg-card: var(--color-gray-100);
+  --color-bg-card-hover: var(--color-gray-300);
   --color-bg-hover: var(--color-gray-300);
   --color-bg-sidebar: var(--color-primary-2);
   --color-bg-sidebar-header: var(--color-gray-100);

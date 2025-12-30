@@ -217,7 +217,7 @@
   border-radius: var(--border-radius-md);
   padding: var(--spacing-3);
   box-shadow: var(--shadow-lg);
-  min-width: 260px;
+  min-width: 320px;
 }
 
 .topic-participants .topic-icon-hover {
