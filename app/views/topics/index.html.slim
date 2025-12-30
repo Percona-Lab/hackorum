@@ -7,10 +7,6 @@
       span Filtering by ##{@active_note_tag}
       = link_to "Clear", topics_path, class: "clear-tag-filter"
 
-  - if user_signed_in?
-    #user-state-requests
-      = turbo_frame_tag "user-state-root", src: user_state_frame_topics_path(topic_ids: @topics.map(&:id), format: :turbo_stream), loading: :eager
-
   .topics-table
     - if user_signed_in?
       .topics-actions data-controller="topics-aware" data-topics-aware-aware-url-value=aware_bulk_topics_path data-topics-aware-aware-all-url-value=aware_all_topics_path
@@ -33,6 +29,10 @@
         .loading-indicator Loading more topics...
     - else
       = turbo_frame_tag "pagination"
+
+- if user_signed_in?
+  #user-state-requests
+    = turbo_frame_tag "user-state-root", src: user_state_frame_topics_path(topic_ids: @topics.map(&:id), format: :turbo_stream), loading: :eager
 
 - if @page_cache_key
   = render partial: "sidebar", locals: { available_note_tags: @available_note_tags, search_query: @search_query }
