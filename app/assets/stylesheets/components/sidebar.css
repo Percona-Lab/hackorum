@@ -8,6 +8,29 @@
   margin-bottom: var(--spacing-8);
 }
 
+.sidebar-section.is-search-focus .sidebar-heading {
+  background: linear-gradient(135deg, var(--color-bg-sidebar-header), var(--color-primary-2));
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-section.is-search-focus .sidebar-content {
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  background: var(--color-bg-card);
+  border: var(--border-width) solid var(--color-primary-200);
+}
+
+.sidebar-section.is-search-focus .search-input {
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-focus);
+}
+
+.sidebar-section.is-search-focus .search-button {
+  border-color: var(--color-primary-300);
+  background: var(--color-bg-hover);
+}
+
 .sidebar .search-input {
   width: 100%;
   padding: var(--spacing-3) var(--spacing-4);

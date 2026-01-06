@@ -95,13 +95,15 @@ class TopicsController < ApplicationController
   def search
     @search_query = params[:q].to_s.strip
 
-    if @search_query.present?
-      load_cached_search_results
-    else
-      base_query = topics_base_query(search_query: @search_query)
-      apply_cursor_pagination(base_query)
-      @new_topics_count = 0
+    if @search_query.blank?
+      respond_to do |format|
+        format.html { redirect_to topics_path(anchor: "search") }
+        format.turbo_stream { redirect_to topics_path(anchor: "search") }
+      end
+      return
     end
+
+    load_cached_search_results
 
     preload_commitfest_summaries
     preload_participation_flags if user_signed_in?
