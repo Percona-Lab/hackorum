@@ -14,7 +14,8 @@
       - if topic.has_contributor_activity?
         - contributor_participants = topic.contributor_participants
         - contributor_count = contributor_participants.size
-        div class ="topic-icon activity-#{ topic.highest_contributor_activity }" data-controller="hover-popover" data-hover-popover-delay-value="200" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
+        - activity_label = case topic.highest_contributor_activity; when "core_team" then "Core Team activity"; when "committer" then "Committer activity"; else "Contributor activity"; end
+        div class ="topic-icon activity-#{ topic.highest_contributor_activity }" title="#{activity_label}: #{contributor_count}" data-controller="hover-popover" data-hover-popover-delay-value="200" data-action="mouseenter->hover-popover#show mouseleave->hover-popover#scheduleHide"
           i.fa-solid.fa-users-rays
           - if contributor_count.positive?
             span.topic-icon-badge = contributor_count
