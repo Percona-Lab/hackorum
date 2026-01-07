@@ -36,6 +36,27 @@
             - @commitfest_committers.each do |committer|
               li = committer
 
+    - if user_signed_in?
+      - note_map = @notes_by_message || {}
+      - message_note_entries = note_map.keys.filter_map do |key|
+        - next unless key.is_a?(Integer)
+        - notes = note_map[key]
+        - next if notes.blank?
+        - number = @message_numbers[key]
+        - next unless number
+        - [key, number, notes]
+      - message_note_entries = message_note_entries.sort_by { |entry| entry[1] }
+      - if message_note_entries.any?
+        details.sidebar-section open=true
+          summary.sidebar-heading Notes
+          .sidebar-section
+            ul.note-overview
+              - message_note_entries.each do |message_id, number, notes|
+                li
+                  = link_to "#message-#{message_id}", class: "note-overview-link" do
+                    span.note-overview-target = "##{number}"
+                    span.note-overview-count = "(#{notes.size})"
+
     details.sidebar-section open=true
       summary.sidebar-heading Participants
       .sidebar-section
