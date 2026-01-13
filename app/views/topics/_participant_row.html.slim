@@ -29,7 +29,7 @@
     .participant-details
       - name_classes = ["participant-name-link"]
       - name_classes << "is-committer" if membership_types.include?("committer")
-      .participant-name = link_to alias_record.name, person_path(alias_record.email), class: name_classes.join(" ")
+      .participant-name = link_to alias_record.name, person_path(alias_record.email), class: name_classes.join(" "), title: tooltip
   - if membership_icons.any?
     .participant-memberships
       - membership_icons.each do |entry|
