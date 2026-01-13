@@ -49,6 +49,61 @@ class Topic < ApplicationRecord
     participants
   end
 
+  def participant_alias_stats(limit: 10)
+    stats = messages.group(:sender_id)
+                    .select('sender_id, COUNT(*) as message_count, MAX(messages.created_at) AS last_at')
+                    .order('message_count DESC')
+                    .limit(50)
+                    .index_by(&:sender_id)
+
+    first_sender = messages.order(:created_at).first&.sender
+    last_sender = messages.order(:created_at).last&.sender
+
+    missing_ids = [first_sender&.id, last_sender&.id].compact.uniq - stats.keys
+    if missing_ids.any?
+      extra_stats = messages.where(sender_id: missing_ids)
+                            .group(:sender_id)
+                            .select('sender_id, COUNT(*) as message_count, MAX(messages.created_at) AS last_at')
+                            .index_by(&:sender_id)
+      stats.merge!(extra_stats)
+    end
+
+    sender_ids = stats.keys
+    senders_by_id = Alias.includes(person: :contributor_memberships).where(id: sender_ids).index_by(&:id)
+
+    entry_for = lambda do |alias_record|
+      return nil unless alias_record
+
+      stat = stats[alias_record.id]
+      {
+        alias: alias_record,
+        message_count: stat&.read_attribute(:message_count)&.to_i,
+        last_at: stat&.read_attribute(:last_at)
+      }
+    end
+
+    participants = []
+
+    participants << entry_for.call(first_sender) if first_sender
+
+    first_and_last = [first_sender&.id, last_sender&.id].compact.uniq
+    other_senders = sender_ids - first_and_last
+    remaining = [limit - first_and_last.length, 0].max
+    other_participants = other_senders
+      .map { |id| senders_by_id[id] }
+      .compact
+      .sort_by { |s| -stats[s.id].read_attribute(:message_count).to_i }
+      .take(remaining)
+
+    participants.concat(other_participants.map { |alias_record| entry_for.call(alias_record) }.compact)
+
+    if last_sender && last_sender.id != first_sender&.id
+      participants << entry_for.call(last_sender)
+    end
+
+    participants.compact
+  end
+
   def has_contributor_activity?
     @has_contributor_activity ||= begin
       contributor_people = ContributorMembership.select(:person_id).distinct

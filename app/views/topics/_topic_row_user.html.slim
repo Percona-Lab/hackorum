@@ -13,7 +13,7 @@ tr id=dom_id(topic) class="topic-row topic-#{state[:status] || 'new'}" data-topi
       .activity-replies = pluralize(replies_count, "reply")
       .activity-time title=absolute_time_display(last_message.created_at) = smart_time_display(last_message.created_at)
   td.topic-participants data-label="Participants"
-    - participants = topic.participant_aliases(limit: 5)
+    - participants = topic.participant_alias_stats(limit: 5)
     - participant_count = topic.participant_count
     = render partial: "avatar_list", locals: { participants: participants, total_participants: participant_count }
     - if topic.has_contributor_activity?
