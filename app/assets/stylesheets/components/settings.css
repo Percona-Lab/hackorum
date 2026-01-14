@@ -22,6 +22,22 @@
   color: var(--color-text-primary);
 }
 
+.settings-page .settings-hint {
+  margin-bottom: var(--spacing-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.settings-page fieldset[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-page fieldset[disabled] input,
+.settings-page fieldset[disabled] button {
+  cursor: not-allowed;
+}
+
 .settings-warning {
   margin-bottom: var(--spacing-4);
   color: var(--color-warning-text);

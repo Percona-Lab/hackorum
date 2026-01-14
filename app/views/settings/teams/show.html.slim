@@ -21,11 +21,14 @@
     - else
       p No members yet.
 
-  - if @can_invite
+  - if @can_view_invite
     .invite-section
       h2 Add member
+      - unless @can_invite
+        p.settings-hint Only team admins can add members.
       = form_with url: settings_team_team_members_path(@team), method: :post, local: true do |f|
-        .form-group
-          = label_tag :username, "Username"
-          = text_field_tag :username, nil, required: true, placeholder: "existing_username"
-        = f.submit "Add", class: "button-primary"
+        fieldset disabled=(!@can_invite)
+          .form-group
+            = label_tag :username, "Username"
+            = text_field_tag :username, nil, required: true, placeholder: "existing_username"
+          = f.submit "Add", class: "button-primary"

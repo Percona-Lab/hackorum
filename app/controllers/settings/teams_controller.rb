@@ -15,7 +15,8 @@ module Settings
     def show
       @team_members = @team.team_members.includes(:user)
       @can_manage = user_signed_in? && @team.admin?(current_user)
-      @can_invite = user_signed_in? && (@team.member?(current_user) || @team.admin?(current_user))
+      @can_invite = user_signed_in? && @team.admin?(current_user)
+      @can_view_invite = user_signed_in? && @team.member?(current_user)
     end
 
     def create
