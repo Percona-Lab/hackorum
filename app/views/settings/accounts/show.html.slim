@@ -46,8 +46,11 @@
             th Actions
         tbody
           - @aliases.each do |al|
-            tr
-              td = al.email
+            tr class=(al.mention_only? ? 'mention-only-alias' : '')
+              td
+                = al.email
+                - if al.mention_only?
+                  span.alias-badge.mention-only (mention only)
               td = al.verified_at ? "Yes" : "No"
               td = (al.id == @default_alias_id) ? "Yes" : "No"
               td

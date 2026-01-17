@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_17_162050) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_17_172025) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -46,9 +46,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_17_162050) do
     t.datetime "updated_at", null: false
     t.datetime "verified_at"
     t.bigint "person_id", null: false
+    t.integer "sender_count", default: 0, null: false
     t.index "lower(TRIM(BOTH FROM email))", name: "index_aliases_on_lower_trim_email"
     t.index ["name", "email"], name: "index_aliases_on_name_and_email", unique: true
     t.index ["person_id"], name: "index_aliases_on_person_id"
+    t.index ["sender_count"], name: "index_aliases_on_sender_count"
     t.index ["user_id"], name: "index_aliases_on_user_id"
   end
 

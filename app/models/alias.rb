@@ -17,6 +17,17 @@ class Alias < ApplicationRecord
     where("lower(trim(email)) = lower(trim(?))", email)
   }
 
+  scope :with_sent_messages, -> { where('sender_count > 0') }
+  scope :mention_only, -> { where(sender_count: 0) }
+
+  def mention_only?
+    sender_count == 0
+  end
+
+  def noname?
+    name == 'Noname'
+  end
+
   def gravatar_url(size: 80)
     require 'digest/md5'
     hash = Digest::MD5.hexdigest(email.downcase.strip)

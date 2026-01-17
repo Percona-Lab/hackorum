@@ -206,9 +206,44 @@ class EmailIngestor
 
   def update_default_alias_for_person(alias_record)
     return unless alias_record&.person
-    return if alias_record.person.user.present?
+    person = alias_record.person
 
-    alias_record.person.update_columns(default_alias_id: alias_record.id)
+    # For persons with users, only fix if current default is Noname
+    if person.user.present?
+      return unless person.default_alias&.name == 'Noname'
+      return if alias_record.name == 'Noname'
+      person.update_columns(default_alias_id: alias_record.id)
+      return
+    end
+
+    # For persons without users, use best alias by sender_count
+    current = person.default_alias
+
+    # If no default yet, set this one
+    if current.nil?
+      person.update_columns(default_alias_id: alias_record.id)
+      return
+    end
+
+    # If current is Noname and new one isn't, switch
+    if current.name == 'Noname' && alias_record.name != 'Noname'
+      person.update_columns(default_alias_id: alias_record.id)
+      return
+    end
+
+    # If both are non-Noname, prefer higher sender_count
+    # Note: sender_count may not be updated yet (counter_cache happens after commit)
+    # So we compare by checking if current has any messages
+    if alias_record.name != 'Noname' && current.name != 'Noname'
+      # Keep the one with more messages - current wins ties
+      # Since counter isn't updated yet, reload to get accurate count
+      current_count = current.sender_count
+      # New alias just sent a message, so its effective count is sender_count + 1
+      new_effective_count = alias_record.sender_count + 1
+      if new_effective_count > current_count
+        person.update_columns(default_alias_id: alias_record.id)
+      end
+    end
   end
 
   def fallback_thread_lookup(subject, message_id:, references:, sent_at:)

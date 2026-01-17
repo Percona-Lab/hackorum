@@ -317,3 +317,15 @@
 .settings-page .invite-section {
   margin-top: var(--spacing-6);
 }
+
+/* Mention-only alias styling */
+.settings-page .email-table tr.mention-only-alias {
+  opacity: 0.7;
+}
+
+.settings-page .alias-badge.mention-only {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-left: var(--spacing-2);
+  font-style: italic;
+}

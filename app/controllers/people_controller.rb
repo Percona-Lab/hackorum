@@ -34,7 +34,7 @@ class PeopleController < ApplicationController
   def load_person
     @person = find_person
     @primary_alias = @person.default_alias
-    @aliases = @person.aliases.order(:email)
+    @aliases = @person.aliases.with_sent_messages.order(:email)
   end
 
   def find_person

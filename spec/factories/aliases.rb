@@ -5,6 +5,7 @@ FactoryBot.define do
     sequence(:name) { |n| "User #{n}" }
     sequence(:email) { |n| "user#{n}@postgresql.org" }
     primary_alias { false }
+    sender_count { 0 }
     created_at { 1.month.ago }
     updated_at { 1.month.ago }
 
@@ -18,6 +19,14 @@ FactoryBot.define do
 
     trait :anonymous do
       user { nil }
+    end
+
+    trait :with_sent_messages do
+      sender_count { 5 }
+    end
+
+    trait :mention_only do
+      sender_count { 0 }
     end
   end
 end

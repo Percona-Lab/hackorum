@@ -69,4 +69,31 @@ class Person < ApplicationRecord
       end
     end
   end
+
+  def recalculate_default_alias!
+    best = find_best_default_alias
+    update!(default_alias: best) if best && best.id != default_alias_id
+  end
+
+  def find_best_default_alias
+    candidates = aliases.reload
+
+    # First: non-Noname aliases that have sent messages, ordered by sender_count
+    best_sender = candidates.with_sent_messages
+                            .where.not(name: 'Noname')
+                            .order(sender_count: :desc)
+                            .first
+    return best_sender if best_sender
+
+    # Second: any non-Noname alias (even mention-only)
+    non_noname = candidates.where.not(name: 'Noname').order(sender_count: :desc, created_at: :asc).first
+    return non_noname if non_noname
+
+    # Third: Noname alias with highest sender_count (if they actually sent messages)
+    noname_sender = candidates.with_sent_messages.order(sender_count: :desc).first
+    return noname_sender if noname_sender
+
+    # Last resort: any alias (keep existing or first)
+    default_alias || candidates.order(:created_at).first
+  end
 end
