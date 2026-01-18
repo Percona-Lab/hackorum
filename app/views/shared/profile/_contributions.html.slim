@@ -1,0 +1,37 @@
+div data-controller="contrib-calendar" data-contrib-calendar-filter-selector-value=".activity-filters form"
+  h2 = title
+  - if contribution_years.any?
+    .year-selector
+      - contribution_years.each do |year|
+        - classes = ["year-button"]
+        - classes << "is-active" if year == contribution_year
+        = link_to year, profile_routes[:contributions].call(year), class: classes.join(" "), data: { turbo_frame: turbo_frame }
+  table.contrib-calendar
+    thead
+      tr
+        th.contrib-label
+        - contribution_month_spans.each do |month|
+          th.contrib-month colspan=month[:span]
+            = link_to month[:label], profile_routes[:monthly].call(month[:year], month[:month]), data: { turbo_frame: turbo_frame, action: "click->contrib-calendar#clickDate" }, class: "contrib-month-link"
+      tr.week-header
+        th.contrib-label Wk
+        - contribution_weeks.each do |week|
+          th.contrib-week
+            - if week[:count].positive?
+              = link_to week[:week], profile_routes[:weekly].call(week[:year], week[:week]), data: { turbo_frame: turbo_frame, action: "click->contrib-calendar#clickDate" }, class: "contrib-week-link"
+            - else
+              span.contrib-week-empty = week[:week]
+    tbody
+      - weekday_labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      - 7.times do |row|
+        tr
+          th.contrib-label = weekday_labels[row]
+          - contribution_weeks.each do |week|
+            - day = week[:days][row]
+            td
+              - tooltip = "#{day[:date]}: #{pluralize(day[:count], 'message')}"
+              - if day[:count].positive?
+                = link_to profile_routes[:daily].call(day[:date].iso8601), data: { turbo_frame: turbo_frame, action: "click->contrib-calendar#clickDate" }, class: "contrib-day-link" do
+                  span.contrib-day class="level-#{day[:level]}" title=tooltip
+              - else
+                span.contrib-day class="level-#{day[:level]}" title=tooltip

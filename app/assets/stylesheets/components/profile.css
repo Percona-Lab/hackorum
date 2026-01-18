@@ -212,14 +212,240 @@
   text-decoration: underline;
 }
 
+.activity-filters {
+  padding: var(--spacing-4);
+  background: var(--color-bg-card);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-3);
+}
+
+.activity-filters form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.activity-filters .filter-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.activity-filters .filter-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-bg-hover);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.activity-filters .filter-checkbox:hover {
+  background: var(--color-bg-icon);
+  border-color: var(--color-border-strong);
+}
+
+.activity-filters .filter-checkbox:has(input:checked) {
+  background: var(--color-primary-100);
+  border-color: var(--color-primary-300);
+  color: var(--color-primary-700);
+}
+
+.activity-filters .filter-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.activity-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-bg-hover);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-3);
+  font-size: var(--font-size-sm);
+}
+
+.activity-summary-total {
+  font-weight: var(--font-weight-semibold);
+}
+
+.activity-summary-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-text-muted);
+}
+
+.activity-summary-item .activity-tag {
+  min-width: 20px;
+  justify-content: center;
+}
+
+.activity-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+}
+
 .activity-tag {
-  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
   padding: 2px 8px;
   border-radius: var(--border-radius-full);
-  background: var(--color-bg-icon-status);
-  color: var(--color-text-contrast);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.activity-tag.tag-started {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.activity-tag.tag-replied {
+  background: var(--color-bg-icon);
+  color: var(--color-text-primary);
+}
+
+.activity-tag.tag-patch {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-card);
+}
+
+.team-row-name {
+  color: var(--color-text-link);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+}
+
+.team-row-name:hover {
+  text-decoration: underline;
+}
+
+.team-badge {
+  padding: 2px 8px;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.team-badge.badge-private {
+  background: var(--color-bg-hover);
+  color: var(--color-text-muted);
+}
+
+.team-badge.badge-visible {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.team-badge.badge-open {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.team-profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.team-profile .profile-header {
+  grid-template-columns: 1fr;
+}
+
+.team-visibility {
+  margin-bottom: var(--spacing-2);
+}
+
+.profile-meta {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.member-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-card);
+}
+
+.member-row-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-full);
+  border: 2px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.member-row-details {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+  flex: 1;
+}
+
+.member-row-name {
+  color: var(--color-text-link);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-row-name:hover {
+  text-decoration: underline;
+}
+
+.member-badge {
+  padding: 2px 8px;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  flex-shrink: 0;
 }
 
 .contrib-calendar {
@@ -245,6 +471,45 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   text-align: left;
+}
+
+.contrib-month-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.contrib-month-link:hover {
+  color: var(--color-text-link);
+  text-decoration: underline;
+}
+
+.week-header th {
+  font-size: 9px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding-bottom: var(--spacing-1);
+}
+
+.contrib-week {
+  width: 12px;
+  text-align: center;
+}
+
+.contrib-week-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 9px;
+}
+
+.contrib-week-link:hover {
+  color: var(--color-text-link);
+  text-decoration: underline;
+}
+
+.contrib-week-empty {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  font-size: 9px;
 }
 
 .contrib-day {

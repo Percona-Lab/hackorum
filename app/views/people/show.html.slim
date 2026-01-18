@@ -2,6 +2,16 @@
 
 - content_for :sidebar do
   .sidebar
+    - if @teams.any?
+      .sidebar-section
+        h2.sidebar-heading Teams
+        .team-list
+          - @teams.each do |team|
+            .team-row
+              = link_to team.name, team_profile_path(team.name), class: "team-row-name"
+              - if team.visibility_private?
+                span.team-badge.badge-private Private
+
     .sidebar-section
       h2.sidebar-heading Additional aliases
       - additional_aliases = @aliases.reject { |al| al.id == @primary_alias&.id }
@@ -36,9 +46,8 @@
         - if badge.present?
           span.profile-badge = badge
 
-  .profile-section
-    = turbo_frame_tag "person-contributions" do
-      = render "contributions"
-
   = turbo_frame_tag "person-activity" do
+    = render "activity_filters"
+    .profile-section
+      = render "contributions"
     = render "recent_threads"

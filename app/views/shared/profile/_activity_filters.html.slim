@@ -1,0 +1,20 @@
+- filter_types = activity_filters || %w[started_thread replied_own_thread replied_other_thread sent_first_patch sent_followup_patch]
+
+.activity-filters data-controller="activity-filter"
+  = form_with url: profile_filter_url(profile_routes, activity_period), method: :get, data: { turbo_frame: turbo_frame, activity_filter_target: "form" } do |f|
+    span.filter-label Filter:
+    label.filter-checkbox
+      = check_box_tag "filters[]", "started_thread", filter_types.include?("started_thread"), data: { action: "change->activity-filter#submit" }
+      |  Started threads
+    label.filter-checkbox
+      = check_box_tag "filters[]", "replied_own_thread", filter_types.include?("replied_own_thread"), data: { action: "change->activity-filter#submit" }
+      |  Replied (own)
+    label.filter-checkbox
+      = check_box_tag "filters[]", "replied_other_thread", filter_types.include?("replied_other_thread"), data: { action: "change->activity-filter#submit" }
+      |  Replied (other)
+    label.filter-checkbox
+      = check_box_tag "filters[]", "sent_first_patch", filter_types.include?("sent_first_patch"), data: { action: "change->activity-filter#submit" }
+      |  Sent first patch
+    label.filter-checkbox
+      = check_box_tag "filters[]", "sent_followup_patch", filter_types.include?("sent_followup_patch"), data: { action: "change->activity-filter#submit" }
+      |  Sent follow-up patch

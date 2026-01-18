@@ -67,8 +67,16 @@ Rails.application.routes.draw do
   resources :help, only: [:index, :show], param: :slug
   get "person/*email/contributions/:year", to: "people#contributions", as: :person_contributions, format: false
   get "person/*email/activity/:date", to: "people#daily_activity", as: :person_activity, format: false
+  get "person/*email/activity/month/:year/:month", to: "people#monthly_activity", as: :person_monthly_activity, format: false
+  get "person/*email/activity/week/:year/:week", to: "people#weekly_activity", as: :person_weekly_activity, format: false
   get "person/*email", to: "people#show", as: :person, format: false
   get "people/*email", to: redirect { |params, _req| "/person/#{params[:email]}" }, format: false
+
+  get "team/:name/contributions/:year", to: "teams_profile#contributions", as: :team_contributions
+  get "team/:name/activity/:date", to: "teams_profile#daily_activity", as: :team_activity
+  get "team/:name/activity/month/:year/:month", to: "teams_profile#monthly_activity", as: :team_monthly_activity
+  get "team/:name/activity/week/:year/:week", to: "teams_profile#weekly_activity", as: :team_weekly_activity
+  get "team/:name", to: "teams_profile#show", as: :team_profile
 
   # Authentication
   resource :session, only: [:new, :create, :destroy]

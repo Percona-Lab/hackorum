@@ -1,0 +1,43 @@
+- content_for :title, @team.name
+
+- content_for :sidebar do
+  .sidebar
+    .sidebar-section
+      h2.sidebar-heading Members
+      - if @members.any?
+        .member-list
+          - @members.each do |tm|
+            - user = tm.user
+            - person = user.person
+            - display_alias = person&.default_alias || user.aliases.first
+            .member-row
+              - if display_alias
+                = image_tag display_alias.display_gravatar_url(size: 32), class: "member-row-avatar", alt: display_alias.name
+                .member-row-details
+                  = link_to display_alias.email, person_path(display_alias.email), class: "member-row-name"
+              - else
+                .member-row-details
+                  span.member-row-name User ##{user.id}
+      - else
+        p No members yet.
+
+.team-profile
+  .profile-header
+    .profile-details
+      h1.profile-name = @team.name
+      .team-visibility
+        - case @team.visibility
+        - when "private"
+          span.team-badge.badge-private Private team
+        - when "visible"
+          span.team-badge.badge-visible Visible team
+        - when "open"
+          span.team-badge.badge-open Open team
+      p.profile-meta
+        = pluralize(@members.count, 'member')
+
+  = turbo_frame_tag "team-activity" do
+    = render "activity_filters"
+    .profile-section
+      = render "contributions"
+    = render "recent_threads"

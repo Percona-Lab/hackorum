@@ -1,0 +1,67 @@
+.profile-section
+  - if activity_period
+    - case activity_period[:type]
+    - when :day
+      h2 Messages on #{activity_period[:date].strftime('%B %d, %Y')}
+    - when :week
+      h2 Messages in week #{activity_period[:week]} (#{activity_period[:start_date].strftime('%b %d')} - #{activity_period[:end_date].strftime('%b %d, %Y')})
+    - when :month
+      h2 Messages in #{Date.new(activity_period[:year], activity_period[:month], 1).strftime('%B %Y')}
+  - else
+    h2 Recent messages
+
+  - if activity_entries.any?
+    - total = activity_entries.size
+    - started = activity_entries.count { |e| e[:activity_types].include?(:started_thread) }
+    - replied_own = activity_entries.count { |e| e[:activity_types].include?(:replied_own_thread) }
+    - replied_other = activity_entries.count { |e| e[:activity_types].include?(:replied_other_thread) }
+    - first_patch = activity_entries.count { |e| e[:activity_types].include?(:sent_first_patch) }
+    - followup_patch = activity_entries.count { |e| e[:activity_types].include?(:sent_followup_patch) }
+    .activity-summary
+      span.activity-summary-total #{total} messages
+      span.activity-summary-item
+        span.activity-tag.tag-started = started
+        |  started threads
+      span.activity-summary-item
+        span.activity-tag.tag-replied = replied_own
+        |  replied (own)
+      span.activity-summary-item
+        span.activity-tag.tag-replied = replied_other
+        |  replied (other)
+      span.activity-summary-item
+        span.activity-tag.tag-patch = first_patch
+        |  first patch
+      span.activity-summary-item
+        span.activity-tag.tag-patch = followup_patch
+        |  follow-up patch
+    table.activity-table
+      thead
+        tr
+          th Activity
+          th Thread
+          th Sent
+      tbody
+        - activity_entries.each do |entry|
+          - topic = entry[:topic]
+          - types = entry[:activity_types] || []
+          tr
+            td.activity-types
+              - types.each do |type|
+                - case type
+                - when :started_thread
+                  span.activity-tag.tag-started Started thread
+                - when :replied_own_thread
+                  span.activity-tag.tag-replied Replied (own)
+                - when :replied_other_thread
+                  span.activity-tag.tag-replied Replied (other)
+                - when :sent_first_patch
+                  span.activity-tag.tag-patch First patch
+                - when :sent_followup_patch
+                  span.activity-tag.tag-patch Follow-up patch
+            td
+              = link_to topic.title, topic_path(topic), class: "activity-topic"
+            td
+              = time_ago_in_words(entry[:sent_at])
+              |  ago
+  - else
+    p No recent activity.
