@@ -171,10 +171,8 @@ module ProfileActivity
     return [[], []] if ids.blank?
 
     year = year.to_i
-    start_date = Date.new(year, 1, 1)
-    end_date = Date.new(year, 12, 31)
-    start_date -= start_date.wday
-    end_date += (6 - end_date.wday)
+    start_date = Date.commercial(year, 1, 1)
+    end_date = Date.commercial(year, Date.new(year, 12, 28).cweek, 7)
 
     counts = build_filtered_contribution_counts(start_date, end_date, filters)
 

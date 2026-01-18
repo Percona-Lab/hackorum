@@ -22,7 +22,7 @@ div data-controller="contrib-calendar" data-contrib-calendar-filter-selector-val
             - else
               span.contrib-week-empty = week[:week]
     tbody
-      - weekday_labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      - weekday_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
       - 7.times do |row|
         tr
           th.contrib-label = weekday_labels[row]
