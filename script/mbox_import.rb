@@ -1,7 +1,10 @@
 require_relative "../config/environment"
 require_relative "../app/services/email_ingestor"
+require_relative "../lib/import_options"
 
-def create_users fields, created_at, limit = 0 
+options = ImportOptions.parse!
+
+def create_users fields, created_at, limit = 0
   return [] unless fields
 
   # Some old mboxes have header fields without parsed addresses
@@ -103,11 +106,12 @@ def sanitize_email_date(mail_date, mail_date_header, message_id)
   sanitized_date
 end
 
-def parse_message(message)
-  msg = EmailIngestor.new.ingest_raw(message, fallback_threading: true)
+def parse_message(message, update_existing:)
+  msg = EmailIngestor.new.ingest_raw(message, fallback_threading: true, update_existing: update_existing)
   puts "Processing #{msg&.message_id || '(duplicate or invalid)'}"
 end
 
+update_existing = options[:update_existing]
 message = ""
 
 ARGV.each do |fn|
@@ -121,7 +125,7 @@ ARGV.each do |fn|
       # all new messages refer to lists.postgresql.org, but not old emails
       # And we can't simply check for From, as it also matches inline attachments containing git diffs
       if (line.match(/^From [^@]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+/i))
-        parse_message(message) unless message.empty?
+        parse_message(message, update_existing: update_existing) unless message.empty?
         message = ""
       else
         message << line

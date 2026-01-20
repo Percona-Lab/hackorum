@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EmailIngestor
-  def ingest_raw(raw_message, fallback_threading: false, trust_date: false)
+  def ingest_raw(raw_message, fallback_threading: false, trust_date: false, update_existing: [])
     m = Mail.new(raw_message)
 
     message_id = clean_reference(m.message_id)
@@ -12,7 +12,7 @@ class EmailIngestor
     body = normalize_body(extract_body(m))
     existing_message = Message.find_by_message_id(message_id)
     if existing_message
-      existing_message.update_columns(body: body)
+      update_existing_message(existing_message, body: body, sent_at: sent_at, update_existing: update_existing)
       return existing_message
     end
 
@@ -63,6 +63,25 @@ class EmailIngestor
   end
 
   private
+
+  def update_existing_message(message, body:, sent_at:, update_existing:)
+    return if update_existing.empty?
+
+    updates = {}
+    updates[:body] = body if update_existing.include?(:body)
+
+    if update_existing.include?(:date) && sent_at && message.created_at != sent_at
+      updates[:created_at] = sent_at
+
+      # Update topic date if this is the first message
+      topic = message.topic
+      if topic && topic.messages.order(:created_at).first&.id == message.id
+        topic.update_columns(created_at: sent_at)
+      end
+    end
+
+    message.update_columns(updates) if updates.any?
+  end
 
   def build_from_aliases(m, sent_at)
     if m.from.nil? || m.from[0].nil?
