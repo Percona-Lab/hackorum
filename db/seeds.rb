@@ -123,6 +123,7 @@ def create_message(topic:, sender:, subject:, body:, created_at:, reply_to: nil,
   Message.create!(
     topic:,
     sender:,
+    sender_person: sender.person,
     reply_to:,
     subject:,
     body:,
@@ -173,6 +174,7 @@ end
 patch_topic = Topic.create!(
   title: "Add VACUUM progress tracking",
   creator: bob_alias,
+  creator_person: bob_alias.person,
   created_at: base_time,
   updated_at: base_time
 )
@@ -293,6 +295,7 @@ Activity.create!(
 rfc_topic = Topic.create!(
   title: "RFC: New index AM hooks",
   creator: carol_alias,
+  creator_person: carol_alias.person,
   created_at: base_time + 3.days,
   updated_at: base_time + 3.days
 )
@@ -342,6 +345,7 @@ Activity.create!(
 resolved_topic = Topic.create!(
   title: "Fix TOAST corruption edge case",
   creator: alice_alias,
+  creator_person: alice_alias.person,
   created_at: base_time + 5.days,
   updated_at: base_time + 5.days
 )
@@ -368,6 +372,7 @@ Activity.create!(
 bot_topic = Topic.create!(
   title: "Build failed on CI",
   creator: ci_bot_alias,
+  creator_person: ci_bot_alias.person,
   created_at: base_time + 6.days,
   updated_at: base_time + 6.days
 )
@@ -385,6 +390,7 @@ create_message(
 discussion_topic = Topic.create!(
   title: "Logical replication improvements",
   creator: legacy_alias,
+  creator_person: legacy_alias.person,
   created_at: base_time + 7.days,
   updated_at: base_time + 7.days
 )
@@ -482,6 +488,7 @@ ThreadAwareness.mark_until(
 contrib_topic = Topic.create!(
   title: "Background worker metrics",
   creator: carol_alias,
+  creator_person: carol_alias.person,
   created_at: base_time + 10.days,
   updated_at: base_time + 10.days
 )
@@ -513,6 +520,7 @@ end
 committer_topic = Topic.create!(
   title: "Autovacuum freeze thresholds",
   creator: bob_alias,
+  creator_person: bob_alias.person,
   created_at: base_time + 11.days,
   updated_at: base_time + 11.days
 )
@@ -544,6 +552,7 @@ end
 past_topic = Topic.create!(
   title: "Historical patch import",
   creator: legacy_alias,
+  creator_person: legacy_alias.person,
   created_at: base_time + 12.days,
   updated_at: base_time + 12.days
 )
@@ -564,6 +573,7 @@ end
 long_topic = Topic.create!(
   title: "Streaming replication design meeting",
   creator: bob_alias,
+  creator_person: bob_alias.person,
   created_at: base_time + 13.days,
   updated_at: base_time + 13.days
 )
@@ -626,6 +636,7 @@ end
 moderate_topic_1 = Topic.create!(
   title: "Connection pool tuning",
   creator: dave_alias,
+  creator_person: dave_alias.person,
   created_at: base_time + 14.days,
   updated_at: base_time + 14.days
 )
@@ -672,6 +683,7 @@ end
 moderate_topic_2 = Topic.create!(
   title: "Monitoring extension roadmap",
   creator: carol_alias,
+  creator_person: carol_alias.person,
   created_at: base_time + 15.days,
   updated_at: base_time + 15.days
 )
@@ -719,6 +731,7 @@ end
 five_part_topic = Topic.create!(
   title: "Five participant sampler",
   creator: alice_alias,
+  creator_person: alice_alias.person,
   created_at: base_time + 16.days,
   updated_at: base_time + 16.days
 )
@@ -749,6 +762,7 @@ end
 six_part_topic = Topic.create!(
   title: "Six participant sampler",
   creator: bob_alias,
+  creator_person: bob_alias.person,
   created_at: base_time + 17.days,
   updated_at: base_time + 17.days
 )
@@ -784,6 +798,7 @@ extra_topics = []
   topic = Topic.create!(
     title: "Archive sampler #{i}",
     creator: creator,
+    creator_person: creator.person,
     created_at: created_at,
     updated_at: created_at
   )
@@ -830,6 +845,7 @@ end
 recent_topic = Topic.create!(
   title: "Recent activity thread",
   creator: alice_alias,
+  creator_person: alice_alias.person,
   created_at: now - 2.days,
   updated_at: now - 2.days
 )
@@ -857,6 +873,7 @@ old_topic_time = now - 400.days
 old_topic = Topic.create!(
   title: "Previous year discussion",
   creator: carol_alias,
+  creator_person: carol_alias.person,
   created_at: old_topic_time,
   updated_at: old_topic_time
 )
