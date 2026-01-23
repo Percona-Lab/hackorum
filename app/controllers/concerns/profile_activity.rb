@@ -103,9 +103,12 @@ module ProfileActivity
       started_thread: 0,
       replied_own_thread: 0,
       replied_other_thread: 0,
+      replied_other_topics: 0,
       sent_first_patch: 0,
       sent_followup_patch: 0
     }
+
+    replied_other_topic_ids = Set.new
 
     messages.each do |message|
       topic = message.topic
@@ -122,9 +125,13 @@ module ProfileActivity
       if filter_symbols.blank? || (activity_types.to_set & filter_symbols).any?
         summary[:total] += 1
         activity_types.each { |type| summary[type] += 1 }
+        if activity_types.include?(:replied_other_thread)
+          replied_other_topic_ids << topic.id
+        end
       end
     end
 
+    summary[:replied_other_topics] = replied_other_topic_ids.size
     summary
   end
 
@@ -134,6 +141,7 @@ module ProfileActivity
       started_thread: 0,
       replied_own_thread: 0,
       replied_other_thread: 0,
+      replied_other_topics: 0,
       sent_first_patch: 0,
       sent_followup_patch: 0
     }

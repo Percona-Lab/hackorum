@@ -18,6 +18,7 @@
     - started = summary[:started_thread] || 0
     - replied_own = summary[:replied_own_thread] || 0
     - replied_other = summary[:replied_other_thread] || 0
+    - replied_other_topics = summary[:replied_other_topics] || 0
     - first_patch = summary[:sent_first_patch] || 0
     - followup_patch = summary[:sent_followup_patch] || 0
     .activity-summary
@@ -31,6 +32,9 @@
       span.activity-summary-item
         span.activity-tag.tag-replied = replied_other
         |  replied (other)
+      span.activity-summary-item
+        span.activity-tag.tag-replied = replied_other_topics
+        |  other threads
       span.activity-summary-item
         span.activity-tag.tag-patch = first_patch
         |  first patch
