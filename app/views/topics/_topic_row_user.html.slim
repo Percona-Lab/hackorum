@@ -8,7 +8,7 @@
 - top_participants = tp_data[:top] || []
 - contributor_participants = tp_data[:contributors] || []
 - status = (state[:status] || "new").to_s
-- unread_status = %w[new reading].include?(status)
+- unread_status = %w[new reading aware].include?(status)
 
 tr id=dom_id(topic) class=["topic-row", "topic-#{status}", ("topic-unread" if unread_status)].compact.join(" ") data-topic-id=topic.id data-last-message-id=topic.last_message_id
   = render partial: "topics/status_cell", locals: { topic: topic, state: state, note_count: note_count, team_readers: team_readers, star_data: star_data }
