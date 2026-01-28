@@ -13,7 +13,7 @@ module Settings
     private
 
     def preferences_params
-      params.require(:user).permit(:mention_restriction)
+      params.require(:user).permit(:mention_restriction, :bold_unread_threads)
     end
   end
 end

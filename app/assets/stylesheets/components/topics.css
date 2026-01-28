@@ -283,6 +283,14 @@ a.topic-icon {
   color: var(--color-text-muted);
 }
 
+.topics-table.unread-bold-enabled .topic-link {
+  font-weight: var(--font-weight-normal);
+}
+
+.topics-table.unread-bold-enabled .topic-row.topic-unread .topic-link {
+  font-weight: var(--font-weight-bold);
+}
+
 .topic-icon-hover {
   display: none;
   position: absolute;

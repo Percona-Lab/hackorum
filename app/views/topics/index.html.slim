@@ -7,7 +7,7 @@
       span Filtering by ##{@active_note_tag}
       = link_to "Clear", topics_path, class: "clear-tag-filter"
 
-  .topics-table
+  .topics-table class=("unread-bold-enabled" if current_user&.bold_unread_threads?)
     table
       thead
         tr

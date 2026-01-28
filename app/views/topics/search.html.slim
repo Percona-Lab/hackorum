@@ -10,7 +10,7 @@
     - if user_signed_in?
       #user-state-requests
         = turbo_frame_tag "user-state-root", src: user_state_frame_topics_path(topic_ids: @topics.map(&:id), format: :turbo_stream), loading: :eager
-    .topics-table
+    .topics-table class=("unread-bold-enabled" if current_user&.bold_unread_threads?)
       table
         thead
           tr

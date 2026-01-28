@@ -28,3 +28,21 @@
               strong Teammates only
               span.radio-description Only users who share a team with you can @mention you
       = f.submit "Save", class: "button-primary"
+
+  .settings-section
+    h2 Thread Overview
+    p.settings-hint Choose how unread threads are emphasized in topic lists.
+    = form_with model: current_user, url: settings_preferences_path, method: :patch, local: true do |f|
+      .form-group
+        .radio-group
+          label
+            = f.radio_button :bold_unread_threads, false
+            span.radio-text
+              strong Colored marker only
+              span.radio-description Use the existing left-side status marker
+          label
+            = f.radio_button :bold_unread_threads, true
+            span.radio-text
+              strong Bold unread titles
+              span.radio-description Unread threads appear in bold like an email inbox
+      = f.submit "Save", class: "button-primary"
