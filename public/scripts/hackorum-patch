@@ -86,6 +86,7 @@ class HackorumPatch
     else
       apply_patches(patch_files)
     end
+    copy_files_to_git_dir(patch_files)
     cleanup_temp_files
 
     print_success_message(use_worktree ? worktree_path : nil)
@@ -716,6 +717,30 @@ class HackorumPatch
     FileUtils.rm_rf(@temp_dir) if @temp_dir && File.exist?(@temp_dir)
   end
 
+  def copy_files_to_git_dir(patch_files)
+    hackorum_dir = File.join(Dir.pwd, '.hackorum')
+    print "Copying patch files to #{hackorum_dir}... "
+
+    FileUtils.rm_rf(hackorum_dir) if File.exist?(hackorum_dir)
+    FileUtils.mkdir_p(hackorum_dir)
+
+    # Copy all patch/diff files
+    patch_files.each do |patch_file|
+      dest = File.join(hackorum_dir, File.basename(patch_file))
+      FileUtils.cp(patch_file, dest)
+    end
+
+    # Write metadata if available
+    if @metadata
+      metadata_file = File.join(hackorum_dir, "#{@topic_id}.json")
+      File.write(metadata_file, JSON.pretty_generate(@metadata))
+    end
+
+    puts "[OK]"
+    puts "  Saved #{patch_files.size} files to .hackorum/"
+    puts ""
+  end
+
   def print_success_message(worktree_path = nil)
     puts "[SUCCESS]"
     puts "=========="
@@ -727,6 +752,8 @@ class HackorumPatch
       puts "Review the patches:"
       puts "  cd #{worktree_path}"
     end
+    puts ""
+    puts "Original patch files and metadata saved to: #{File.join(Dir.pwd, '.hackorum')}"
     puts ""
   end
 end

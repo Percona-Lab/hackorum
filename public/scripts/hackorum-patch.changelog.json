@@ -6,7 +6,8 @@
       "date": "2026-02-04",
       "changes": [
         "Improved base commit detection using submission date from archive metadata",
-        "Added --verbose option for detailed base commit detection debugging"
+        "Added --verbose option for detailed base commit detection debugging",
+        "Copy extracted patch files and metadata to .hackorum/ directory for inspection"
       ]
     },
     {
