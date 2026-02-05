@@ -43,7 +43,7 @@ html data-theme="light"
         span Please set a username in Settings.
     - starred_active = controller_name == "topics" && action_name == "index" && params[:filter].to_s == "starred_by_me"
     nav.main-navigation
-      .nav-container data-controller="nav-overflow" data-nav-overflow-target="container"
+      .nav-container
         .nav-brand
           - if content_for?(:sidebar)
             button.nav-burger type="button" aria-label="Toggle sidebar" data-action="click->sidebar#toggleMobile"
@@ -68,9 +68,6 @@ html data-theme="light"
               = link_to "Statistics", stats_path, class: "nav-link"
               = link_to "Reports", reports_path, class: "nav-link"
               = link_to "Help", help_index_path, class: "nav-link"
-              button.nav-link.theme-toggle type="button" aria-label="Toggle theme" data-controller="theme" data-action="click->theme#toggle"
-                i.fas.fa-moon data-theme-target="icon"
-                span data-theme-target="label" Theme
               - if user_signed_in?
                 - if current_user&.person&.default_alias
                   = link_to current_user.person.default_alias.name, person_path(current_user.person.default_alias.email), class: "nav-link nav-user"
@@ -93,38 +90,39 @@ html data-theme="light"
             i.fa-regular.fa-bell
             - if unread.positive?
               span.nav-badge = unread
-        .nav-menu data-nav-overflow-target="menu"
+        .nav-menu
           .nav-links
-            = link_to "Topics", topics_path, class: "nav-link", data: { "nav-overflow-target": "item" }
+            = link_to "Topics", topics_path, class: "nav-link"
             - search_link = content_for?(:search_sidebar) ? "#search" : topics_path(anchor: "search")
-            = link_to "Search", search_link, class: "nav-link", data: { "nav-overflow-target": "item" }
-            = link_to "Statistics", stats_path, class: "nav-link", data: { "nav-overflow-target": "item" }
-            = link_to "Reports", reports_path, class: "nav-link", data: { "nav-overflow-target": "item" }
-            = link_to "Help", help_index_path, class: "nav-link", data: { "nav-overflow-target": "item" }
+            = link_to "Search", search_link, class: "nav-link"
+            = link_to "Reports", reports_path, class: "nav-link"
           .nav-right
-            button.nav-link.theme-toggle type="button" aria-label="Toggle theme" data-controller="theme" data-action="click->theme#toggle" data-nav-overflow-target="item"
-              i.fas.fa-moon data-theme-target="icon"
-              span data-theme-target="label" Theme
             .nav-auth
               - if user_signed_in?
                 - if current_user&.person&.default_alias
-                  = link_to current_user.person.default_alias.name, person_path(current_user.person.default_alias.email), class: "nav-link nav-user", data: { "nav-overflow-target": "item" }
+                  = link_to current_user.person.default_alias.name, person_path(current_user.person.default_alias.email), class: "nav-link nav-user"
                 - unread = activity_unread_count
-                = link_to activities_path, class: "nav-link nav-link-activity", title: "Activity", data: { "nav-overflow-target": "item" } do
+                = link_to activities_path, class: "nav-link nav-link-activity", title: "Activity" do
                   i.fa-regular.fa-bell
                   - if unread.positive?
                     span.nav-badge = unread
-                = link_to "Settings", settings_root_path, class: "nav-link", data: { "nav-overflow-target": "item" }
-                - if current_admin?
-                  = link_to "Admin", admin_root_path, class: "nav-link", data: { "nav-overflow-target": "item" }
-                = button_to "Sign out", session_path, method: :delete, class: "nav-link", form: { style: 'display:inline', data: { "nav-overflow-target": "item" } }, data: { turbo: false }
               - else
-                = link_to "Sign in", new_session_path, class: "nav-link", data: { "nav-overflow-target": "item" }
-                = link_to "Register", new_registration_path, class: "nav-link", data: { "nav-overflow-target": "item" }
-          details.nav-overflow-dropdown data-nav-overflow-target="overflow"
-            summary.nav-link.nav-overflow-toggle aria-label="More" data-action="click->sidebar#closeMenuOnNavigate"
+                = link_to "Sign in", new_session_path, class: "nav-link"
+                = link_to "Register", new_registration_path, class: "nav-link"
+          details.nav-overflow-dropdown data-controller="nav-dropdown"
+            summary.nav-link.nav-overflow-toggle aria-label="Menu" data-action="click->sidebar#closeMenuOnNavigate"
               i.fa-solid.fa-bars
-            .nav-overflow-menu data-nav-overflow-target="overflowMenu"
+            .nav-overflow-menu
+              = link_to "Statistics", stats_path, class: "nav-link"
+              = link_to "Help", help_index_path, class: "nav-link"
+              - if user_signed_in?
+                = link_to "Settings", settings_root_path, class: "nav-link"
+                - if current_admin?
+                  = link_to "Admin", admin_root_path, class: "nav-link"
+                = button_to "Sign out", session_path, method: :delete, class: "nav-link", form: { style: 'display:inline' }, data: { turbo: false }
+              - else
+                = link_to "Sign in", new_session_path, class: "nav-link"
+                = link_to "Register", new_registration_path, class: "nav-link"
 
     - if content_for?(:sidebar)
       .page-layout.with-sidebar data-sidebar-target="layout"

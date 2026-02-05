@@ -166,6 +166,10 @@
   }
 }
 
+.sidebar .tags-list {
+  padding-left: var(--spacing-3);
+}
+
 .sidebar .attachments-list {
   list-style: none;
   padding-left: 0;

@@ -118,6 +118,57 @@
   border-color: var(--color-border);
 }
 
+.theme-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-6);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: 999px;
+  background: var(--color-bg-card);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.theme-choice-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.theme-choice-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.theme-choice-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: 999px;
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-bg-page);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.theme-choice-button:hover {
+  background: var(--color-bg-hover);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.theme-choice-button.is-active {
+  background: var(--color-bg-button);
+  color: var(--color-text-button);
+  border-color: transparent;
+}
+
+.theme-choice-button.is-active i {
+  color: currentColor;
+}
+
 .settings-page .button-secondary:hover {
   border-color: var(--color-primary-300);
   box-shadow: var(--shadow-sm);

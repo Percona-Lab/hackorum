@@ -4,16 +4,24 @@ const STORAGE_KEY = "hackorum-theme"
 const DEFAULT_THEME = "light"
 
 export default class extends Controller {
-  static targets = ["icon", "label"]
+  static targets = ["icon", "label", "button"]
 
   connect() {
     this.applyInitialTheme()
   }
 
   toggle(event) {
-    event.preventDefault()
+    if (event && event.type !== "change") {
+      event.preventDefault()
+    }
     const nextTheme = this.currentTheme === "dark" ? "light" : "dark"
     this.setTheme(nextTheme)
+  }
+
+  select(event) {
+    event.preventDefault()
+    const { themeValue } = event.currentTarget.dataset
+    this.setTheme(themeValue)
   }
 
   applyInitialTheme() {
@@ -47,6 +55,12 @@ export default class extends Controller {
 
     this.element.setAttribute("aria-pressed", theme === "dark")
     this.element.setAttribute("title", `Switch to ${theme === "dark" ? "light" : "dark"} mode`)
+
+    if (this.hasButtonTarget) {
+      this.buttonTargets.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.themeValue === theme)
+      })
+    }
   }
 
   get currentTheme() {

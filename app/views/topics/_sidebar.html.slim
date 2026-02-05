@@ -37,6 +37,6 @@
       - if user_signed_in? && @available_note_tags.present?
         .sidebar-section
           h3.sidebar-heading My tags
-          ul.quick-filters
+          ul.quick-filters.tags-list
             - @available_note_tags.each do |tag, count|
               li = link_to "##{tag} (#{count})", topics_path(note_tag: tag)
