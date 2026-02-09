@@ -303,6 +303,14 @@ a.topic-icon {
   }
 }
 
+.topic-row.topic-reading.has-new-replies {
+  background: var(--color-bg-unread);
+
+  &:hover {
+    background: var(--color-bg-unread-hover);
+  }
+}
+
 .topic-row.topic-read {
   color: var(--color-text-muted);
   background: var(--color-bg-read);
@@ -329,7 +337,7 @@ a.topic-icon {
   top: 0;
   bottom: 0;
   width: var(--topic-new-replies-strip-width, 260px);
-  background: var(--color-bg-unread);
+  background: var(--color-bg-read);
   clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
   z-index: 0;
 }
