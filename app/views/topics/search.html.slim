@@ -35,10 +35,9 @@
       table
         thead
           tr
-            th Topic
-            th Participants
-            th Replies
-            th Activity
+            th.topic-title Topic
+            th.activity-header Activity
+            th.participants-header Participants
         tbody#topics
           = render partial: "topics", locals: { topics: @topics }
 
