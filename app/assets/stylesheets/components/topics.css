@@ -239,6 +239,10 @@ a.topic-icon {
     gap: var(--spacing-2);
   }
 
+  .topic-title-icons {
+    min-width: 0;
+  }
+
   .topic-icon {
     padding: 2px;
     margin-right: 0;
@@ -328,6 +332,8 @@ a.topic-icon {
   padding: var(--spacing-2) var(--spacing-4) var(--spacing-2) var(--spacing-2);
   align-self: stretch;
   height: 100%;
+  min-width: var(--topic-title-icons-width, 190px);
+  flex-shrink: 0;
 }
 
 .status-border.has-new-replies::before {
