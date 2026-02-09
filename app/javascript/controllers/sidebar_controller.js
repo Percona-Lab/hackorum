@@ -15,6 +15,7 @@ export default class extends Controller {
     this.handleDocumentClick = this.handleDocumentClick.bind(this)
     window.addEventListener("resize", this.handleWindowResize)
     document.addEventListener("click", this.handleDocumentClick)
+    this.wasMobile = this.isMobile()
 
     if (!this.hasLayoutTarget || !this.hasSidebarTarget) {
       return
@@ -86,8 +87,12 @@ export default class extends Controller {
   }
 
   handleWindowResize() {
-    if (this.isMobile()) {
+    const isMobile = this.isMobile()
+    if (this.wasMobile && !isMobile) {
       this.closeMobile()
+    }
+    this.wasMobile = isMobile
+    if (isMobile) {
       return
     }
 
