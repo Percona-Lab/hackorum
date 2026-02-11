@@ -18,5 +18,8 @@
       = link_to admin_imap_sync_states_path, class: admin_nav_link_class(:imap_sync) do
         i.fas.fa-sync
         span IMAP Sync
+      = link_to admin_pg_hero.root_path, class: admin_nav_link_class(:pghero) do
+        i.fas.fa-database
+        span PgHero
 
 = render template: 'layouts/application'

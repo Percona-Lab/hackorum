@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         post :preview
       end
     end
+    mount PgHero::Engine, at: "/pghero" if defined?(PgHero)
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -114,12 +115,6 @@ Rails.application.routes.draw do
 
   post "messages/:id/read", to: "messages#read", as: :read_message
   resources :attachments, only: [:show]
-
-  if defined?(PgHero)
-    constraints AdminConstraint.new do
-      mount PgHero::Engine, at: "/pghero"
-    end
-  end
 
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
