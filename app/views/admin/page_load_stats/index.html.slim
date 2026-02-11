@@ -1,0 +1,128 @@
+- content_for :title, "Performance"
+
+.admin-merge-container
+  h1 Performance
+
+  / Date range form
+  form.perf-date-form action=admin_page_load_stats_path method="get"
+    .perf-date-fields
+      label
+        span From
+        input type="date" name="from" value="#{@from.iso8601}"
+      label
+        span To
+        input type="date" name="to" value="#{@to.iso8601}"
+      button.button.button-secondary type="submit" Apply
+    p.perf-date-summary
+      strong> #{number_with_delimiter(@total_count)}
+      | requests from #{@from.strftime('%b %d, %Y')} to #{@to.strftime('%b %d, %Y')}
+
+  / Summary cards
+  .perf-summary-cards
+    - { false => "Normal", true => "Turbo" }.each do |turbo, label|
+      - data = @overall[turbo]
+      .perf-card
+        .perf-card-header= label
+        .perf-card-body
+          .perf-stat-row
+            .perf-stat
+              .stat-value= data[:p95].positive? ? "#{data[:p95].round(1)}ms" : "—"
+              .stat-label P95
+            .perf-stat
+              .stat-value= data[:p99].positive? ? "#{data[:p99].round(1)}ms" : "—"
+              .stat-label P99
+            .perf-stat
+              .stat-value= number_with_delimiter(data[:count])
+              .stat-label Requests
+
+  / Histograms
+  .perf-histograms
+    - bins = PageLoadStat::HISTOGRAM_BINS
+    - { false => "normal", true => "turbo" }.each do |turbo, key|
+      .perf-histogram-col
+        h3= turbo ? "Turbo Requests" : "Normal Requests"
+        - hist = @overall[turbo][:histogram]
+        - chart_data = bins.map { |b| { label: b[:label], count: hist[b[:index]] } }
+        div id="perf-histogram-#{key}" data-histogram=chart_data.to_json
+
+  / Per-action table
+  h2 Per-Action Breakdown
+  .merge-log-table
+    table
+      thead
+        tr
+          th Controller
+          th Action
+          th Requests
+          th P95 (ms)
+          th P99 (ms)
+          th StdDev (ms)
+      tbody
+        - if @per_action.empty?
+          tr
+            td colspan="6" .empty-state No data for this range.
+        - else
+          - @per_action.each do |row|
+            tr
+              td= row[:controller]
+              td= row[:action]
+              td= number_with_delimiter(row[:request_count].to_i)
+              td= row[:p95].to_f.round(1)
+              td= row[:p99].to_f.round(1)
+              td= row[:stddev] ? row[:stddev].to_f.round(1) : "—"
+
+  script[src="https://cdn.jsdelivr.net/npm/vega@5.25.0"]
+  script[src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"]
+  script
+    |
+      (function() {
+        var bins = document.querySelectorAll("[data-histogram]");
+        bins.forEach(function(el) {
+          var data = JSON.parse(el.dataset.histogram);
+          var spec = {
+            "$schema": "https://vega.github.io/schema/vega/v5.json",
+            width: Math.max(280, el.parentElement.getBoundingClientRect().width - 40),
+            height: 200,
+            padding: 10,
+            autosize: { type: "fit", contains: "padding" },
+            data: [{ name: "hist", values: data }],
+            scales: [
+              {
+                name: "x",
+                type: "band",
+                domain: { data: "hist", field: "label" },
+                range: "width",
+                padding: 0.2
+              },
+              {
+                name: "y",
+                type: "linear",
+                domain: { data: "hist", field: "count" },
+                nice: true,
+                range: "height"
+              }
+            ],
+            axes: [
+              { orient: "bottom", scale: "x", labelAngle: -30, labelAlign: "right" },
+              { orient: "left", scale: "y" }
+            ],
+            marks: [
+              {
+                type: "rect",
+                from: { data: "hist" },
+                encode: {
+                  enter: {
+                    x: { scale: "x", field: "label" },
+                    width: { scale: "x", band: 1 },
+                    y: { scale: "y", field: "count" },
+                    y2: { scale: "y", value: 0 },
+                    fill: { value: "#4e79a7" },
+                    tooltip: { signal: "datum.label + ': ' + datum.count + ' requests'" }
+                  }
+                }
+              }
+            ]
+          };
+          vegaEmbed(el, spec, { actions: false, tooltip: true });
+        });
+      })();

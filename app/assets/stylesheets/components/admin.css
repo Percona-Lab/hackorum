@@ -464,3 +464,107 @@ textarea.form-input {
     flex-direction: column;
   }
 }
+
+/* Performance Dashboard */
+.perf-date-form {
+  margin-bottom: var(--spacing-6);
+}
+
+.perf-date-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-3);
+}
+
+.perf-date-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.perf-date-fields input[type="date"] {
+  padding: var(--spacing-2) var(--spacing-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-input);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.perf-date-summary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.perf-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+
+.perf-card {
+  background: var(--color-bg-card);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.perf-card-header {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-table-header);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.perf-card-body {
+  padding: var(--spacing-4);
+}
+
+.perf-stat-row {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.perf-stat {
+  flex: 1;
+  text-align: center;
+  padding: var(--spacing-3);
+  background: var(--color-bg-hover);
+  border-radius: var(--border-radius-md);
+}
+
+.perf-histograms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+
+.perf-histogram-col h3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-3);
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+  .perf-date-fields {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .perf-summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .perf-histograms {
+    grid-template-columns: 1fr;
+  }
+}

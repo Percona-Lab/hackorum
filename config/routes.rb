@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         post :preview
       end
     end
+    resources :page_load_stats, only: [:index]
     mount PgHero::Engine, at: "/pghero" if defined?(PgHero)
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
