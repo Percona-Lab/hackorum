@@ -6,9 +6,11 @@
     - if @outline.present?
       .help-outline
         .help-outline-header On this page
-        nav.help-outline-nav
+        nav.help-outline-nav data-controller="help-outline"
           - @outline.each do |heading|
-            = link_to "##{heading[:id]}", class: "help-outline-link level-#{heading[:level]}" do
+            = link_to "##{heading[:id]}",
+		      class: "help-outline-link level-#{heading[:level]}",
+		      data: { help_outline_target: "link" } do
               = heading[:title]
 
     nav.help-nav

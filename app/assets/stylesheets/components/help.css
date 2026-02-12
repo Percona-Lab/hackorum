@@ -290,3 +290,9 @@
   transform: translateY(-1px);
   text-decoration: none;
 }
+
+.help-outline-link {
+  &.active {
+    font-weight: bold;
+  }
+}
