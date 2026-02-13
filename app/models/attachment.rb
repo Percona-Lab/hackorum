@@ -6,11 +6,11 @@ class Attachment < ApplicationRecord
   after_destroy :update_topic_has_attachments
 
   def patch?
-    file_name&.ends_with?(".patch") || file_name&.ends_with?(".diff") || patch_content?
+    patch_extension? || patch_content?
   end
 
   def patch_extension?
-    file_name&.ends_with?(".patch") || file_name&.ends_with?(".diff")
+    file_name&.ends_with?(".patch", ".diff")
   end
 
   def decoded_body
