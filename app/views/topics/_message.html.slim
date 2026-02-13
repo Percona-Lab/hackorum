@@ -80,6 +80,16 @@
               pre.attachment-content
                 code.language-diff data-controller="diff-highlight"
                   = attachment.decoded_body_utf8
+          - elsif attachment.text?
+            details.attachment
+              summary.attachment-info
+                span.attachment-summary-row
+                  span.filename = attachment.file_name
+                  span.content-type = attachment.content_type if attachment.content_type
+                  = link_to "Download", attachment_path(attachment), class: "attachment-download", download: attachment.file_name, data: { turbo: false }
+              pre.attachment-content
+                code
+                  = attachment.decoded_body_utf8
           - else
             .attachment
               .attachment-info
