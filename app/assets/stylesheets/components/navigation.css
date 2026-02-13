@@ -222,7 +222,7 @@
   top: calc(100% + var(--spacing-2));
   background: var(--color-bg-card);
   border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-lg);
   padding: var(--spacing-2);
   min-width: 220px;
