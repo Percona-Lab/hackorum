@@ -106,9 +106,9 @@ class HackorumPatch
   def sort_patch_files(files)
     files.sort_by do |f|
       basename = File.basename(f)
-      # Match sequence number: digits followed by hyphen before the actual patch name
+      # Match sequence number: first 4+ digit group followed by a hyphen
       # e.g., "0001-subject.patch" or "nocfbot.v2-0005-subject.patch"
-      if basename =~ /(\d+)-[^-]+\.(patch|diff)$/i
+      if basename =~ /(\d{4,})-.*\.(patch|diff)$/i
         [$1.to_i, basename]
       else
         # Fallback: sort alphabetically but after numbered patches
