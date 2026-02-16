@@ -81,12 +81,13 @@ class HackorumPatch
       create_branch(base_commit)
     end
 
+    copy_files_to_git_dir(patch_files)
+
     if @using_diff_mode
       apply_diffs(patch_files)
     else
       apply_patches(patch_files)
     end
-    copy_files_to_git_dir(patch_files)
     cleanup_temp_files
 
     print_success_message(use_worktree ? worktree_path : nil)
