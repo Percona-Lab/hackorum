@@ -21,6 +21,7 @@ class SessionsController < ApplicationController
     else
       reset_session
       session[:user_id] = user.id
+      user.update_columns(last_login_at: Time.current)
       redirect_to root_path, notice: "Signed in successfully"
     end
   end

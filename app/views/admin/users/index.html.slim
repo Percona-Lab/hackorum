@@ -1,7 +1,10 @@
 - content_for :title, "Admin — Users"
 
 .settings-page
-  h1 Users
+  h1
+    | Users
+    - if @users_total_count
+      span.settings-page-count = "(#{@users_total_count})"
 
   .email-table-wrap
     table.email-table
@@ -11,6 +14,7 @@
           th Emails
           th Admin
           th Created
+          th Last login
           th Actions
       tbody
         - @users.each do |user|
@@ -41,5 +45,6 @@
                 = button_to toggle_admin_admin_user_path(user), method: :post, class: "button-secondary button-small", data: { turbo_confirm: "#{user.admin? ? 'Remove' : 'Grant'} admin privileges for #{user.username}?" } do
                   = user.admin? ? "Remove admin" : "Make admin"
             td = user.created_at.strftime('%Y-%m-%d')
+            td = user.last_login_at ? smart_time_display(user.last_login_at) : "—"
             td
               = link_to "Add email", new_email_admin_user_path(user), class: "button-secondary button-small"

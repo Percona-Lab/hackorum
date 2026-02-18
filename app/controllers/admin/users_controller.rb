@@ -8,6 +8,7 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def index
+    @users_total_count = User.active.count
     @users = User.active
                  .includes(person: [ :default_alias, :aliases ])
                  .order(created_at: :desc)

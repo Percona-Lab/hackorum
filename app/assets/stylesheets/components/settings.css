@@ -8,6 +8,12 @@
   margin-bottom: var(--spacing-8);
 }
 
+.settings-page .settings-page-count {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+  margin-left: var(--spacing-2);
+}
+
 .settings-section {
   padding: var(--spacing-6) 0;
   border-bottom: var(--border-width) solid var(--color-border);

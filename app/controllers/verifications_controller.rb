@@ -71,6 +71,7 @@ class VerificationsController < ApplicationController
 
     reset_session
     session[:user_id] = user.id
+    user.update_columns(last_login_at: Time.current)
     redirect_to root_path, notice: "Registration complete. You are signed in."
   end
 
