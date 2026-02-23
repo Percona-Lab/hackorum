@@ -23,7 +23,7 @@ console: ## Open Rails console in the web container
 
 test: ## Run RSpec in the web container (uses test database)
 	$(COMPOSE) exec -e RAILS_ENV=test -e DATABASE_URL=postgresql://hackorum:hackorum@db:5432/hackorum_test web bin/rails db:prepare
-	$(COMPOSE) exec -e RAILS_ENV=test -e DATABASE_URL=postgresql://hackorum:hackorum@db:5432/hackorum_test web bundle exec rspec
+	$(COMPOSE) exec -e RAILS_ENV=test -e DATABASE_URL=postgresql://hackorum:hackorum@db:5432/hackorum_test web bundle exec rspec $(ARGS)
 
 db-migrate: ## Run db:migrate
 	$(COMPOSE) exec web bin/rails db:migrate
