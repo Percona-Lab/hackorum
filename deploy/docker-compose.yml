@@ -41,6 +41,9 @@ services:
       PGUSER: ${POSTGRES_USER:-postgres}
       PGPASSWORD: ${POSTGRES_PASSWORD:-postgres}
       PGDATABASE: ${POSTGRES_DB:-hackorum}
+      # Puma concurrency
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-3}
+      RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-5}
       # Run Solid Queue supervisor inside Puma so background jobs (emails, etc.) get processed.
       SOLID_QUEUE_IN_PUMA: "1"
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
